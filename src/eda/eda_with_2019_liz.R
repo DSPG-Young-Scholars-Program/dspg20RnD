@@ -69,6 +69,20 @@ count(raw_abstracts, AGENCY)
 ggplot(raw_abstracts) +
   geom_bar(aes(x = AGENCY))
 
+count(raw_abstracts, ORGANIZATION_NAME)
 ggplot(raw_abstracts) +
-  geom_histogram(aes(x = FY_TOTAL_COST), binwidth = 500000)
+  geom_bar(aes(x = ORGANIZATION_NAME))
 
+#Reporting on the cost column
+
+#Most frequent words by agency
+
+#Something with the project terms(?)
+
+#Abstract length (by agency, other variables)
+raw_abstracts$characters <- nchar(raw_abstracts$ABSTRACT)
+
+raw_abstracts %>% #This doesn't totally work
+  filter(AGENCY == 'NIH') %>%
+  ggplot(aes(characters)) +
+  geom_histogram()
