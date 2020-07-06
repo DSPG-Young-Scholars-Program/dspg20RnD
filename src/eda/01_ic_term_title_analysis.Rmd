@@ -141,7 +141,7 @@ tidy_abstracts <- tidy_abstracts %>%
 
 tidy_abstracts %>%
   count(word, sort = TRUE) %>%
-  filter(n > 250000) %>%
+  filter(n > 200000) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
   geom_col() +
