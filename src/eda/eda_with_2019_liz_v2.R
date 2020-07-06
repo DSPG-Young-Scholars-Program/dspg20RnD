@@ -25,29 +25,26 @@ raw_abstracts_2020 %>%
 
 #Convert to tidy format and remove stopwords
 
-tidy_all <- tibble(text = raw_abstracts_2020$ABSTRACT)
+tidy_all <- tibble(text = raw_abstracts$ABSTRACT)
 tidy_2019 <- tibble(text = abstracts_2019$ABSTRACT)
-tidy_titles <- tibble(text = raw_abstracts_2020$PROJECT_TITLE)
+tidy_titles <- tibble(text = raw_abstracts$PROJECT_TITLE)
 
 tidy_all <- tidy_all %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words) %>%
-  count(word, sort = TRUE)
+  anti_join(stop_words)
 
 tidy_2019 <- tidy_2019 %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words) %>%
-  count(word, sort = TRUE)
+  anti_join(stop_words)
 
 tidy_titles <- tidy_titles %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words) %>%
-  count(word, sort = TRUE)
+  anti_join(stop_words)
 
 #Graphically display most prevalent words
 
 tidy_2019 %>%
-  filter(n > 250000) %>%
+  filter(n > 30000) %>%
   count(word, sort = TRUE) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
@@ -58,7 +55,7 @@ tidy_2019 %>%
 
 tidy_all %>%
   count(word, sort = TRUE) %>%
-  filter(n > 500000) %>%
+  filter(n > 200000) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
   geom_col() +
@@ -68,7 +65,7 @@ tidy_all %>%
 
 tidy_titles %>%
   count(word, sort = TRUE) %>%
-  filter(n > 10000) %>%
+  filter(n > 20000) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(word, n)) +
   geom_col() +
@@ -98,6 +95,8 @@ ggplot(raw_abstracts_2020) +
   geom_histogram(aes(x = FY_TOTAL_COST), binwidth = 500000)
 
 #Abstracts nchar
+
+raw_abstracts_2020
 
 raw_abstracts_2020$ab_char <- nchar(raw_abstracts_2020$ABSTRACT)
 
