@@ -73,32 +73,46 @@ tidy_titles %>%
   coord_flip() +
   ggtitle("Titles: All Abstracts")
 
-#Count abstracts by ___
-count(raw_abstracts_2020, FY.x) %>%
+#Count abstracts
+
+count(raw_abstracts_2020, FY.x) %>% #by year
   view()
 
-raw_abstracts_2020 %>%
-  filter(FY.y < 2020) %>%
+raw_abstracts_2020 %>% #graph of year
+  #filter(FY.y < 2020) %>%
   ggplot() +
-  geom_bar(aes(x = FY.y))
+  geom_bar(aes(x = FY.x))
 
-count(raw_abstracts_2020, DEPARTMENT)
+count(raw_abstracts_2020, DEPARTMENT) #by department
 ggplot(raw_abstracts_2020) +
-  geom_bar(aes(x = DEPARTMENT))
+  geom_bar(aes(x = DEPARTMENT)) +
+  facet_wrap(~ FY.x)
 
-count(raw_abstracts_2020, AGENCY)
+count(raw_abstracts_2020, AGENCY) #by agency
 ggplot(raw_abstracts_2020) +
   geom_bar(aes(x = AGENCY)) +
-  facet_wrap(~ FY.y)
+  facet_wrap(~ FY.x)
 
 ggplot(raw_abstracts_2020) +
-  geom_histogram(aes(x = FY_TOTAL_COST), binwidth = 500000)
+  geom_point(aes(x = FY.x, y = FY_TOTAL_COST))
 
 #Abstracts nchar
 
-raw_abstracts_2020
-
 raw_abstracts_2020$ab_char <- nchar(raw_abstracts_2020$ABSTRACT)
+
+all_char <- raw_abstracts_2020 %>%
+  count(DEPARTMENT)
+
+low <- c(78, 0, 13, 3929, 169, 156, 158, 9)
+sum(low)
+
+all_char <- cbind(all_char, low)
+
+rel <- (low/all_char$n) * 100
+all_char <- cbind(all_char, rel)
+
+ggplot(all_char, aes(x = DEPARTMENT, y = rel, colour = DEPARTMENT)) +
+  geom_bar(stat = "identity")
 
 raw_abstracts_2020 %>%
   #filter(ab_char < 10000) %>%
@@ -117,39 +131,23 @@ raw_abstracts_2020 %>%
  #geom_bar(aes(x = DEPARTMENT, y = mean(ab_char)), group = 2)
 ##WORK IN PROGRESS
 
-
-all <- count(raw_abstracts_2020, DEPARTMENT)
-
-raw_abstracts_2020 %>%
-  filter(ab_char < 150) %>%
-  count(DEPARTMENT) %>%
-
+#Reporting on the cost column
+sum(is.na(raw_abstracts_2020$FY_TOTAL_COST)) #287698
 
 raw_abstracts_2020 %>%
-  count(DEPARTMENT)
-
-
-raw_abstracts_2020 %>%
-  ggplot(aes(as.Char(FY.x), FY_TOTAL_COST)) +
+  filter(FY_TOTAL_COST < 200000000) %>%
+  ggplot(aes(x = FY.x, y = FY_TOTAL_COST, colour = DEPARTMENT)) +
   geom_point()
 
-count(raw_abstracts, FY)
-ggplot(raw_abstracts) +
-  geom_bar(aes(x = FY))
+raw_abstracts_2020 %>%
+  filter(FY_TOTAL_COST < 10000) %>%
+  count()
 
-count(raw_abstracts, DEPARTMENT)
-ggplot(raw_abstracts) +
-  geom_bar(aes(x = DEPARTMENT))
+raw_abstracts_2020 %>%
+  count(DEPARTMENT) %>%
+  ggplot(aes(x = n, y = raw_abstracts_2020$FY_TOTAL_COST)) +
+  geom_point()
 
-count(raw_abstracts, AGENCY)
-ggplot(raw_abstracts) +
-  geom_bar(aes(x = AGENCY))
-
-count(raw_abstracts, ORGANIZATION_NAME)
-ggplot(raw_abstracts) +
-  geom_bar(aes(x = ORGANIZATION_NAME))
-
-#Reporting on the cost column
 
 #Most frequent words by agency
 
@@ -162,3 +160,10 @@ raw_abstracts %>% #This doesn't totally work
   filter(AGENCY == 'NIH') %>%
   ggplot(aes(characters)) +
   geom_histogram()
+
+
+pdf(file = "missing_dep.pdf", width = 10, height = 15)
+g <- gg_miss_var(show_pct = TRUE, facet = DEPARTMENT) +
+  labs(y = "% Missing by Department")
+print(g)
+dev.off()

@@ -1,5 +1,5 @@
 ---
-title: "New_Data_EDA"
+title: "New Data EDA"
 author: "Liz Miller"
 date: "7/2/2020"
 output: html_document
@@ -15,6 +15,7 @@ I'm going to put things I find at the top here and add to it as I work through c
 
 1. IC_CENTER, BUDGET_START_DATE, BUDGET_END_DATE, and FY_TOTAL_COST_SUBPROJECT are all entirely NA
 2. FY.x and FY.y are slightly different. 
+3. DEPARTMENT == 'VA' has no values for FY_TOTAL_COST
 
 ```{r importing the datat, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -25,7 +26,7 @@ library(naniar)
 raw_abstracts_2020 <- read_csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
 
 abstracts_2019 <- raw_abstracts_2020 %>%
-  filter(FY.y == 2019)
+  filter(FY.x == 2019) #Use FY.x 
 
 ```
 
@@ -38,8 +39,17 @@ gg_miss_var(raw_abstracts_2020, show_pct = TRUE) +
   labs(y = "% Missing: All")
 
 gg_miss_var(abstracts_2019, show_pct = TRUE) +
-  labs(y = "# Missing: 2019")
+  labs(y = "% Missing: 2019")
+
+raw_abstracts_2020 %>%
+  gg_miss_var(show_pct = TRUE, facet = DEPARTMENT) + 
+  labs(y = "% Missing by Department")
+
+
+
 ```
+
+#Highest word counts
 
 ```{r convert the data to a tiny format for some word based analysis, echo = FALSE}
 
@@ -93,21 +103,39 @@ tidy_titles %>%
 
 ```
 
-##MORE THINGS
+##Looking at Cost! 
 
-``` {r variable counts}
+``` {r variable costs}
+raw_abstracts_2020 %>%
+  ggplot(aes(x = FY.x, y = FY_TOTAL_COST, colour = DEPARTMENT)) +
+  geom_point()
 
 raw_abstracts_2020 %>%
-  filter(FY.x < 2020) %>%
-  filter(FY_TOTAL_COST < 2000000)
-  ggplot(aes(FY_TOTAL_COST)) +
-  geom_bar()
+  filter(FY_TOTAL_COST > 25000000) %>%
+  count()
+
+raw_abstracts_2020 %>%
+  filter(FY_TOTAL_COST == 1) %>%
+  count()
+
+raw_abstracts_2020 %>%
+  filter(FY_TOTAL_COST < 10000) %>%
+  count()
+
+raw_abstracts_2020 %>%
+  filter(between(FY_TOTAL_COST, 10000, 25000000)) %>%
+  ggplot(aes(x = DEPARTMENT, y = FY_TOTAL_COST)) +
+  geom_boxplot() +
+  facet_wrap(~ FY.x) 
+
+#Note VA does not show in this output because all FY_TOTAL_COST data is missing for DEPARTMENT == 'VA'
+
 
 ```
 
-##
+##Looking at Length!
 
-``` {r code}
+``` {r word counts}
 
 raw_abstracts_2020$ab_char <- nchar(raw_abstracts_2020$ABSTRACT)
 
@@ -121,6 +149,9 @@ raw_abstracts_2020 %>%
                fun.ymin = min,
                fun.ymax = max,
                fun.y = mean)
+
+
+
 ```
 
 
