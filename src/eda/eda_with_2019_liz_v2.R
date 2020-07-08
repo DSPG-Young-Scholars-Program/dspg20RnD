@@ -1,33 +1,42 @@
+
+##This code is rough and a bit disorganized. I used this file to develop code for the Rmd file '02_liz_eda.Rmd' in the same GitHub repository. If you are looking to reuse this code, I recommend looking at that file.
+
 library(tidyverse)
 library(tidytext)
 library(readr)
 library(naniar)
 
-raw_abstracts_2020 <- read_csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
+raw_abstracts_2020 <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
 View(raw_abstracts_2020)
 
 abstracts_2019 <- raw_abstracts_2020 %>%
   filter(FY.x == 2019)
 
-sum(is.na(raw_abstracts_2020$IC_CENTER)) #1156137
+sum(is.na(raw_abstracts_2020$IC_CENTER)) #622428
 
-gg_miss_var(raw_abstracts_2020, show_pct = FALSE) +
+gg_miss_var(raw_abstracts_2020, show_pct = TRUE, facet = FY.x) +
   labs(y = "% Missing")
   #100% Missing: IC_CENTER, BUDGET_START_DATA,
     # BUDGET_END_DATE, FY_TOTAL_COST_SUB_PROJECTS
 
+pdf(file = "missing_by_year.pdf", width = 20, height = 15)
+g <- gg_miss_var(raw_abstracts_2020, show_pct = TRUE, facet = FY.x) +
+  labs(y = "% Missing by Year")
+print(g)
+dev.off()
+
 gg_miss_var(abstracts_2019)
 
-raw_abstracts_2020 %>%
-  select(-c(IC_CENTER, BUDGET_START_DATE, BUDGET_END_DATE, FY_TOTAL_COST_SUB_PROJECTS, OTHER_PIS)) %>% #Expect OTHER_PIS to have a high rate of NA values
-  gg_miss_var(show_pct = TRUE) +
-  labs(y = "% Missing")
+#raw_abstracts_2020 %>%
+  #select(-c(IC_CENTER, BUDGET_START_DATE, BUDGET_END_DATE, FY_TOTAL_COST_SUB_PROJECTS, OTHER_PIS)) %>% #Expect OTHER_PIS to have a high rate of NA values
+  #gg_miss_var(show_pct = TRUE) +
+  #labs(y = "% Missing")
 
 #Convert to tidy format and remove stopwords
 
-tidy_all <- tibble(text = raw_abstracts$ABSTRACT)
+tidy_all <- tibble(text = raw_abstracts_2020$ABSTRACT)
 tidy_2019 <- tibble(text = abstracts_2019$ABSTRACT)
-tidy_titles <- tibble(text = raw_abstracts$PROJECT_TITLE)
+tidy_titles <- tibble(text = raw_abstracts_2020$PROJECT_TITLE)
 
 tidy_all <- tidy_all %>%
   unnest_tokens(word, text) %>%
@@ -100,6 +109,12 @@ ggplot(raw_abstracts_2020) +
 
 raw_abstracts_2020$ab_char <- nchar(raw_abstracts_2020$ABSTRACT)
 
+raw_abstracts_2020 %>%
+  filter(ab_char < 150) %>%
+  count(DEPARTMENT)
+
+
+
 all_char <- raw_abstracts_2020 %>%
   count(DEPARTMENT)
 
@@ -167,3 +182,15 @@ g <- gg_miss_var(show_pct = TRUE, facet = DEPARTMENT) +
   labs(y = "% Missing by Department")
 print(g)
 dev.off()
+
+library(reshape2)
+
+tidy_joined <- full_join(tidy_all, tidy_titles, by = "word")
+
+tidy_joined %>%
+  melt() %>%
+  ggplot(aes(word, value, fill = variable)) +
+  geom_bar(stat = "identity", width = .5, position = "dodge", show.legend = FALSE) +
+  xlab(NULL) +
+  coord_flip() +
+  ggtitle("Titles: All Abstracts")
