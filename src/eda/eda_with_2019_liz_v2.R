@@ -40,15 +40,18 @@ tidy_titles <- tibble(text = raw_abstracts_2020$PROJECT_TITLE)
 
 tidy_all <- tidy_all %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words)
+  anti_join(stop_words) %>%
+  count(word, sort = TRUE)
 
 tidy_2019 <- tidy_2019 %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words)
+  anti_join(stop_words) %>%
+  count(word, sort = TRUE)
 
 tidy_titles <- tidy_titles %>%
   unnest_tokens(word, text) %>%
-  anti_join(stop_words)
+  anti_join(stop_words) %>%
+  count(word, sort = TRUE)
 
 #Graphically display most prevalent words
 
@@ -194,3 +197,24 @@ tidy_joined %>%
   xlab(NULL) +
   coord_flip() +
   ggtitle("Titles: All Abstracts")
+
+abstracts <- raw_abstracts_2020 %>%
+  select(DEPARTMENT, AGENCY, ORGANIZATION_NAME, ABSTRACT)
+
+tidy_abstracts <- tibble(dept = raw_abstracts_2020$DEPARTMENT, agen = raw_abstracts_2020$AGENCY, org = raw_abstracts_2020$ORGANIZATION_NAME, ic = raw_abstracts_2020$IC_CENTER, text = raw_abstracts_2020$ABSTRACT)
+
+tidy_abstracts <- tidy_abstracts %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  count(agen, word, sort = TRUE)
+
+tidy_abstracts %>%
+  filter(word %in% c("pandemic", "virus", "influenza", "1918", "spanish", "zika", "hiv", "aids", "vaccine", "flu", "pandemics", "mers", "sars", "disease", "diseases", "plauge", "typhus", "communicable", "contagious", "epidemiology", "contagion", "symptomatic", "asymptomatic", "contactless", "edpidemic", "quarantine", "immunity", "incubation", "transmission", "patient", "patients", "covid")) %>%
+  filter(n > 500) %>%
+  filter(ic != "NA") %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n, fill = ic)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+  ggtitle(label = "Abstracts:", subtitle = "Pandemic Terms")
