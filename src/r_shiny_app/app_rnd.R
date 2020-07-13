@@ -83,49 +83,53 @@ ui <- fluidPage(
     tabPanel(h4("EDA & Profiling"),
 
              fluidRow(width = 12,
-                      column(10, align = 'center',
+                      column(12, align = 'center',
                              h3(strong('Exploratory Data Analysis'))),
-                      column(10, p("Some early exploratory data analysis we did to get a feel for the size and the scope of our dataset."))),
+                      column(12, p("Some early exploratory data analysis we did to get a feel for the size and the scope of our dataset."))),
 
              fluidRow(style = "margin: 20px;",
-                      column(8, p("Count of Abstract by Year")),
-                      column(width = 6, plotOutput("freq_year", width = "100%"))),
+                      column(12, align = 'center', p("Count of Abstract by Year")),
+                      column(width = 10, align = 'center', plotOutput("freq_year", width = "100%"))),
 
              fluidRow(style = "margin: 20px;",
-                      column(8, p("Count of Abstract by Department")),
-                      column(width = 6, plotOutput("freq_dept", width = "100%"))),
+                      column(12, align = 'center', p("Count of Abstract by Department")),
+                      column(width = 10, align = 'center', plotOutput("freq_dept", width = "100%"))),
 
              fluidRow(style = "margin: 20px;",
-                      column(8, p("Count of Abstract by Agency")),
-                      column(width = 6, plotOutput("freq_agen", width = "100%"))),
+                      column(12, align = 'center', p("Count of Abstract by Agency")),
+                      column(width = 10, align = 'center', plotOutput("freq_agen", width = "100%"))),
 
              fluidRow(width = 12,
-                      column(10, align = 'center',
+                      column(12, align = 'center',
                              h3(strong('Data Profiling'))),
-                      column(10, p("Looking at some of the missing values in our dataset."))),
+                      column(12, p("Looking at some of the missing values in our dataset and other examinations of the completeness of the Federal RePORTER dataset."))),
 
              fluidRow(style = "margin: 20px;",
-                      column(8, p("Graph of NA values")),
-                      column(width = 6, plotOutput("na", width = "100%"))),
+                      column(12, align = 'center', p("Graph of NA values")),
+                      column(width = 10, align = 'center', plotOutput("na", width = "100%"))),
 
     br()
     ),
 
     tabPanel(h4("Text Explorer"),
              fluidRow(width = 12,
-                      column(10, align = 'center',
+                      column(12, align = 'center',
                              h3(strong('Text Explorer')))),
 
              fluidRow(style = "margin: 20px;",
-                      column(8, p("Count of most frequent words")),
-                      column(width = 6, plotOutput("wordcount", width = "100%"))),
+                      column(12, p("Count of most frequent words")),
+                      column(width = 12, align = 'center', plotOutput("wordcount", width = "100%"))),
+
+             fluidRow(style = "margin: 20px;",
+                      column(12, p("Word Frequency over time")),
+                      column(width = 12, align = 'center', plotOutput("word_time", width = "100%"))),
 
              fluidRow(align = "center",
                       selectInput("department", "Funding Department",
                                   choices = list("DOD", "ED", "EPA", "HHS", "NASA", "NSF", "USDA", "VA"),
                                   selected = "HHS")),
              fluidRow(style = "margin: 20px;",
-                      column(width = 6, plotOutput("important_words", width = "100%"))),
+                      column(width = 12, align = 'center', plotOutput("important_words", width = "100%"))),
 
              br()
              ),
@@ -135,7 +139,7 @@ ui <- fluidPage(
              fluidRow(width = 12, style = "margin: 20px 0px 20px 20px",
                       column(2),
                       column(1),
-                      column(8, p("Topic Modeling is a thing we have done.")),
+                      column(12, p("Topic Modeling is a thing we have done.")),
                       column(1)),
 
              fluidRow(width = 12, style = "margin: 20px",
@@ -143,16 +147,19 @@ ui <- fluidPage(
                                    tabPanel("LDAvis",
                                             fluidRow(width = 12,
                                                      column(1),
-                                                     column(10, h3(strong( "LDAvis")),
+                                                     column(12, h3(strong( "LDAvis")),
                                                             hr(),
-                                                            strong("What is LDAvis?"))
+                                                            strong("What is LDAvis?")),
+                                                     column(12, p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." ))
                                    )),
+
                                    tabPanel("Termite",
                                             fluidRow(width = 12,
                                                      column(1),
-                                                     column(10, h3(strong( "Termite")),
+                                                     column(12, h3(strong( "Termite")),
                                                             hr(),
-                                                            strong("What is Termite?"))
+                                                            strong("What is Termite?")),
+                                                     column(12, " Termite comes from", a(href = "http://vis.stanford.edu/files/2012-Termite-AVI.pdf", "Termite: Visualization Techniques for Assessing Textual Topic Models"), "by Chuang, Manning, and Heer.")
                                     )),
 
                                    tabPanel("Clusters",
@@ -214,7 +221,7 @@ ui <- fluidPage(
   fluidRow(style = "margin: 20px",
            width = 12,
            column(12, align = 'center',
-                  em('Last updated: May 2020'))
+                  em('Last updated: July 2020'))
   )
                                                    )
 
@@ -228,12 +235,12 @@ server <- function(input, output, session) {
 
   output$freq_dept <- renderPlot({
     ggplot(raw_abstracts) +
-      geom_bar(aes(x = DEPARTMENT))
+      geom_bar(aes(x = DEPARTMENT, fill = DEPARTMENT), show.legend = FALSE)
   })
 
   output$freq_agen <- renderPlot({
     ggplot(raw_abstracts) +
-      geom_bar(aes(x = AGENCY))
+      geom_bar(aes(x = AGENCY, fill = AGENCY), show.legend = FALSE)
   })
 
   output$na <- renderPlot({
@@ -283,6 +290,15 @@ server <- function(input, output, session) {
       geom_col(show.legend = FALSE) +
       labs(x = NULL, y = "tf_idf") +
       coord_flip()
+  })
+
+  output$word_time <- renderPlot({
+    #selected_word <- input$search
+    tidy_year %>%
+      filter(word == "research") %>%
+      ggplot(aes(x = year, y = n)) +
+      geom_point() +
+      geom_smooth()
   })
 
 }
