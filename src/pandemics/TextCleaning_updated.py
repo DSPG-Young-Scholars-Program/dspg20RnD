@@ -28,7 +28,7 @@ def remove_duplicates(df):
     ###############
     
     l1 = len(df)
-    df = df.drop_duplicates(subset=['RAW_ABSTRACT','FY.y']) #Drop projects with identical abstracts and year. Different year
+    df = df.drop_duplicates(subset=['ABSTRACT','FY.x']) #Drop projects with identical abstracts and year. Different year
                                                           # could indicate additional funding sent to this project.
     l2 = len(df)
     
