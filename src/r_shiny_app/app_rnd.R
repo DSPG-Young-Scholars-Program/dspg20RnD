@@ -27,22 +27,23 @@ library(tidytext)
 #load data
 
 raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
+tidy_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_abstracts_dept.csv")
 
-tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
+#tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
 
-tidy_abstracts <- tidy_abstracts %>%
-  unnest_tokens(word, text) %>%
-  anti_join(stop_words) %>%
-  count(dept, word, sort = TRUE)
+#tidy_abstracts <- tidy_abstracts %>%
+  #unnest_tokens(word, text) %>%
+  #anti_join(stop_words) %>%
+  #count(dept, word, sort = TRUE)
 
-total_abstracts <- tidy_abstracts %>%
-  group_by(dept) %>%
-  summarize(total = sum(n))
+#total_abstracts <- tidy_abstracts %>%
+  #group_by(dept) %>%
+  #summarize(total = sum(n))
 
-tidy_abstracts <- left_join(tidy_abstracts, total_abstracts)
+#tidy_abstracts <- left_join(tidy_abstracts, total_abstracts)
 
-tidy_abstracts <- tidy_abstracts %>%
-  bind_tf_idf(word, dept, n)
+#tidy_abstracts <- tidy_abstracts %>%
+  #bind_tf_idf(word, dept, n)
 
 # ui -----------------------------------------------------------------------------------------
 
@@ -236,7 +237,7 @@ server <- function(input, output, session) {
   })
 
   output$na <- renderPlot({
-    gg_miss_var(raw_abstracts_2020, show_pct = TRUE) +
+    gg_miss_var(raw_abstracts, show_pct = TRUE) +
       labs(y = "% Missing")
   })
 
@@ -255,34 +256,32 @@ server <- function(input, output, session) {
   output$important_words <- renderPlot({
 
     selected_type <- switch(input$department,
-                            "Defense Department" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "DOD", ],
-                            "Department of Education" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "ED", ],
-                            "Environmental Protections Agency" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "EPA", ],
-                            "Health and Human Services" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "HHS", ],
+                            "DOD" =
+                              tidy_abstracts[tidy_abstracts$dept == "DOD", ],
+                            "ED" =
+                              tidy_abstracts[tidy_abstracts$dept == "ED", ],
+                            "EPA" =
+                              tidy_abstracts[tidy_abstracts$dept == "EPA", ],
+                            "HHS" =
+                              tidy_abstracts[tidy_abstracts$dept == "HHS", ],
                             "NASA" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "NASA", ],
-                            "National Science Foundation" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "NSF", ],
-                            "US Department of Agriculture" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "USDA", ],
-                            "Veterans Affairs" =
-                              raw_abstracts[raw_abstracts$DEPARTMENT == "VA", ]
-                            )
+                              tidy_abstracts[tidy_abstracts$dept == "NASA", ],
+                            "NSF" =
+                              tidy_abstracts[tidy_abstracts$dept == "NSF", ],
+                            "USDA" =
+                              tidy_abstracts[tidy_abstracts$dept == "USDA", ],
+                            "VA" =
+                              tidy_abstracts[tidy_abstracts$dept == "VA", ])
 
     selected_type %>%
       arrange(desc(tf_idf)) %>%
       mutate(word = factor(word, levels = rev(unique(word)))) %>%
       group_by(dept) %>%
-      top_n(10) %>%
+      top_n(20) %>%
       ungroup() %>%
       ggplot(aes(word, tf_idf, fill = dept)) +
       geom_col(show.legend = FALSE) +
       labs(x = NULL, y = "tf_idf") +
-      facet_wrap(~dept, ncol = 1, scales = "free") +
       coord_flip()
   })
 
