@@ -47,15 +47,40 @@ def remove_duplicates(df):
     return df
 
 
-def create_working_abstract_col(df):
+def drop_empties(df):
     
-    # Define a new series which is an abstract that keeps the raw text, but can be continuously manipulated.
-    # Also strips white space from beginning and end of abstracts and again removes empty abstracts.
-
-    df['working_abstract']=df['ABSTRACT'].apply(str.strip)
-    df.drop(df[df['working_abstract'].apply(len)==0].index,axis=0,inplace=True)
+    l1 = len(df)
+    ix = df[df['working_abstract'].apply(len)==0].index
+    print(ix)
+    df.drop(ix,axis=0,inplace=True)
+    l2 = len(df)
+    
+    print(f"dropped {l1-l2}")
     
     return df
+
+
+    
+def strip_nonalnum(word):
+    
+    # function strips non-alphanumeric characters from the beginning and end of a string
+    # adapted from: https://stackoverflow.com/questions/22650506/how-to-rermove-non-alphanumeric-characters-at-the-beginning-or-end-of-a-string
+    
+    # This function works as long as abstract is not a single non-alphanumeric character -- fixed!
+    
+    if not word:
+        return word  # nothing to strip
+    if (len(word) == 1) and (not word[0].isalnum()):
+        return ""
+    for start, c in enumerate(word):
+        if c.isalnum():
+            break
+    for end, c in enumerate(word[::-1]):
+        if c.isalnum():
+            break
+                  
+    return word[start:len(word) - end]
+
 
 
 def remove_short_abstracts(df, limit):
@@ -70,6 +95,7 @@ def remove_short_abstracts(df, limit):
     print(l1-l2, "short abstracts removed")
     
     return df
+
 
 
 def remove_phrase(x, phrase,loc='Start'):
@@ -97,46 +123,11 @@ def remove_phrase(x, phrase,loc='Start'):
         return 'Error'
     
 
-def remove_junk_start(df, col, start_phrases):
+#
+#  Preprocessing functions -------------------------------------------
+#
     
-    # Removes junk phrases from the start of abstracts. Abstracts are contained in df[col]
-
-    # strip symbols from start
-    df[col]=df[col].apply(str.lstrip,args=['?-_^. :,!;¿|]#%>&'])
-
-    # Remove found phrases
-    for phrase in start_phrases:
-        print(phrase)
-        df[col]=df[col].apply(remove_phrase,args=[phrase,'Start']).apply(str.lstrip,args=[' :'])
-        
-    # drop empty abstracts 
-    df.drop(df[df[col].apply(len)==0].index,axis=0,inplace=True)
     
-    # update Start Char column in df
-    df['Start Char']=df[col].apply(lambda x: x[0])
-    
-    return df
-
-
-
-def remove_junk_end(df, col, end_phrases):
-
-    # Removes junk phrases from the end of abstracts.  Abstracts are contained in df[col]
-
-    # Remove found phrases
-    for phrase in end_phrases:      
-        print(phrase)
-        df[col]=df[col].apply(remove_phrase,args=[phrase,'End'])
-
-    # drop empty abstracts         
-    df.drop(df[df[col].apply(len)==0].index,axis=0,inplace=True)
-    
-    # update 'LAST_CHAR' column in df
-    df['LAST_CHAR']=df[col].apply(lambda x: x[-1])
-    
-    return df
-
-
 def tokenize(docs):
 
     #Converts each document in docs into a list of lowercase tokens
