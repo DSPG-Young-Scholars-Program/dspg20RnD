@@ -28,6 +28,7 @@ library(tidytext)
 
 raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
 tidy_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_abstracts_dept.csv")
+tidy_year <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_year.csv")
 
 #tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
 
