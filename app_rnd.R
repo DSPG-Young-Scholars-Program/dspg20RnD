@@ -8,11 +8,7 @@ library(leaflet)
 library(leaflet.extras)
 library(RColorBrewer)
 library(sf)
-
-
 library(shiny)
-#library(sf)
-#library(leaflet)
 library(dplyr)
 library(leaflet.extras)
 library(shinythemes)
@@ -21,14 +17,18 @@ library(ggplot2)
 library(ggthemes)
 library(viridis)
 library(scales)
-#library(RColorBrewer)
 library(readxl)
-#library(plotly)
 library(GGally)
 library(ggrepel)
 
-# ui -----------------------------------------------------------------------------------------
+#load data
 
+raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
+
+#make plot
+
+
+# ui -----------------------------------------------------------------------------------------
 
 ui <- fluidPage(
   theme = shinytheme("cosmo"),
@@ -63,15 +63,26 @@ ui <- fluidPage(
 
   tabsetPanel(
 
-    tabPanel(h4("Text Explorer"),
+    tabPanel(h4("EDA & Profiling"),
 
              fluidRow(width = 12,
-                      column(1),
                       column(10, align = 'center',
-                             h3(strong('Text Explorer'))),
-                      column(1)),
+                             h3(strong('Exploratory Data Analysis'))),
+                      column(8, p("Some early exploratory data analysis we did to get a feel for the size and the scope of our dataset."))),
+
+             fluidRow(style = "margin: 20px;",
+                      column(8, p("Count of Abstract by Year")),
+                      column(width = 6, plotOutput("freq_year", width = "100%"))),
+
     br()
     ),
+
+    tabPanel(h4("Text Explorer"),
+             fluidRow(width = 12,
+                      column(10, align = 'center',
+                             h3(strong('Text Explorer')))),
+             br()
+             ),
 
     tabPanel(h4("Topic Models"),
 
@@ -163,6 +174,11 @@ ui <- fluidPage(
 
 # Run the application
 server <- function(input, output, session) {
+
+  output$freq_year <- renderPlot({
+    ggplot(raw_abstracts) +
+      geom_bar(aes(x = FY.x))
+  })
 
 }
 
