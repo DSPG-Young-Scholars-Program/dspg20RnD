@@ -5,6 +5,16 @@ raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_feder
 library(tidyverse)
 library(tidytext)
 
+#tidied abstracts
+
+tidy_words <- tibble(text = raw_abstracts$ABSTRACT)
+
+tidy_words <- tidy_words %>%
+  unnest_tokens(word, text) %>%
+  count(word, sort = TRUE)
+
+write.csv(tidy_words, "tidy_words.csv")
+
 #Abstracts tidied by department
 tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
 
