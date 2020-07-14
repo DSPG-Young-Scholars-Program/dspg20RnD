@@ -169,3 +169,7 @@ vignettes/*.pdf
 .Renviron
 *.Rproj
 .Rproj.user
+
+# Data files
+*.pkl
+*.sav
