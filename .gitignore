@@ -173,3 +173,4 @@ vignettes/*.pdf
 # Data files
 *.pkl
 *.sav
+*.csv
