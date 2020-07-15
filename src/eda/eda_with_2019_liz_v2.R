@@ -172,7 +172,7 @@ raw_abstracts_2020 %>%
 #Something with the project terms(?)
 
 #Abstract length (by agency, other variables)
-raw_abstracts$characters <- nchar(raw_abstracts$ABSTRACT)
+raw_abstracts_2020$characters <- nchar(raw_abstracts_2020$ABSTRACT)
 
 raw_abstracts %>% #This doesn't totally work
   filter(AGENCY == 'NIH') %>%

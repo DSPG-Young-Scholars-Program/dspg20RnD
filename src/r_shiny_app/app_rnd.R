@@ -30,6 +30,12 @@ tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
 tidy_year <- read.csv("~/tidy_year.csv")
 #tidy_words <- read.csv("~/tidy_words.csv")
 
+#tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
+
+#tidy_abstracts <- tidy_abstracts %>%
+  #unnest_tokens(word, text) %>%
+  #anti_join(stop_words) %>%
+  #count(dept, word, sort = TRUE)
 
 # ui -----------------------------------------------------------------------------------------
 
@@ -301,6 +307,15 @@ server <- function(input, output, session) {
          createJSON(phi, theta, doc.length, vocab, term.frequency,
                     R = input$nTerms))})
 
+
+  output$word_time <- renderPlot({
+    #selected_word <- input$search
+    tidy_year %>%
+      filter(word == "research") %>%
+      ggplot(aes(x = year, y = n)) +
+      geom_point() +
+      geom_smooth()
+  })
 
 }
 
