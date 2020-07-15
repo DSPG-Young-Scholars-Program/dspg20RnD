@@ -2,7 +2,6 @@ library(devtools)
 library(shiny)
 library(tidyverse)
 library(shinydashboard)
-library(plotly)
 library(colourpicker)
 library(leaflet)
 library(leaflet.extras)
@@ -12,23 +11,24 @@ library(shiny)
 library(dplyr)
 library(leaflet.extras)
 library(shinythemes)
-library(tableHTML)
 library(ggplot2)
 library(ggthemes)
 library(viridis)
 library(scales)
-library(readxl)
 library(GGally)
 library(ggrepel)
 library(naniar)
-library(tidyverse)
 library(tidytext)
+library(shinyWidgets)
+library(LDAvis)
+library(LDAvisData)
 
 #load data
 
 raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
-tidy_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_abstracts_dept.csv")
-tidy_year <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_year.csv")
+tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
+tidy_year <- read.csv("~/tidy_year.csv")
+#tidy_words <- read.csv("~/tidy_words.csv")
 
 #tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
 
@@ -36,15 +36,6 @@ tidy_year <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app/tidy_year.csv")
   #unnest_tokens(word, text) %>%
   #anti_join(stop_words) %>%
   #count(dept, word, sort = TRUE)
-
-#total_abstracts <- tidy_abstracts %>%
-  #group_by(dept) %>%
-  #summarize(total = sum(n))
-
-#tidy_abstracts <- left_join(tidy_abstracts, total_abstracts)
-
-#tidy_abstracts <- tidy_abstracts %>%
-  #bind_tf_idf(word, dept, n)
 
 # ui -----------------------------------------------------------------------------------------
 
@@ -75,7 +66,7 @@ ui <- fluidPage(
            column(1),
            column(10,
                   p(),
-                  p('This project is for DSPG 2020 examining emerging topics in Research and Development using data from the Federal RePORTER database.')),
+                  p('This project is for DSPG 2020 examining emerging topics in Research and Development using data from the Federal RePORTER database. Please be patient while graphs load.')),
            column(1)),
   hr(),
 
@@ -118,15 +109,20 @@ ui <- fluidPage(
                              h3(strong('Text Explorer')))),
 
              fluidRow(style = "margin: 20px;",
-                      column(12, p("Count of most frequent words")),
+                      column(12, align = 'center', p("Count of most frequent words")),
                       column(width = 12, align = 'center', plotOutput("wordcount", width = "100%"))),
 
+             fluidRow(align = "center", width = 12,
+                      column(10, h3(strong("Search dataset for frequency of different words over time."))),
+                      searchInput("search_term", label = NULL, value = "research")),
+
              fluidRow(style = "margin: 20px;",
-                      column(12, p("Word Frequency over time")),
+                      column(12, align = 'center', p("Word Frequency over time")),
                       column(width = 12, align = 'center', plotOutput("word_time", width = "100%"))),
 
              fluidRow(align = "center",
-                      selectInput("department", "Funding Department",
+                      column(12, h3(strong("Words weighted by Funding Department"))),
+                      selectInput("department", "Select Funding Department",
                                   choices = list("DOD", "ED", "EPA", "HHS", "NASA", "NSF", "USDA", "VA"),
                                   selected = "HHS")),
              fluidRow(style = "margin: 20px;",
@@ -146,13 +142,17 @@ ui <- fluidPage(
              fluidRow(width = 12, style = "margin: 20px",
                       navlistPanel(widths = c(2, 10),
                                    tabPanel("LDAvis",
-                                            fluidRow(width = 12,
+                                            fluidRow(width = 10,
                                                      column(1),
                                                      column(12, h3(strong( "LDAvis")),
                                                             hr(),
                                                             strong("What is LDAvis?")),
-                                                     column(12, p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." ))
-                                   )),
+                                                     column(10, p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." )),
+                                                     column(10,
+                                                            sliderInput("nTerms", "Number of terms to display", min = 20, max = 40, value = 30),
+                                                            visOutput('myChart')
+                                                     ))
+                                            ),
 
                                    tabPanel("Termite",
                                             fluidRow(width = 12,
@@ -189,7 +189,7 @@ ui <- fluidPage(
                                                             strong("Other things????????"))
                                             ))
                                             )),
-             br(),
+             br()
              ),
 
     tabPanel(h4("Other Visualizations"),
@@ -198,7 +198,7 @@ ui <- fluidPage(
                       column(10, align = 'center',
                              h3(strong('Other images we have generated about this data.'))),
                       column(1)),
-             br(),
+             br()
     ),
 
     tabPanel(h4("Who We Are"),
@@ -292,6 +292,21 @@ server <- function(input, output, session) {
       labs(x = NULL, y = "tf_idf") +
       coord_flip()
   })
+  filtered_data <- reactive({
+    dplyr::filter(tidy_year, word == input$search_term)
+  })
+
+  output$word_time <- renderPlot({
+      ggplot(filtered_data(), aes(x = year, y = n)) +
+      geom_point() +
+      geom_smooth()
+  })
+
+  output$myChart <- renderVis({
+    with(Jeopardy,
+         createJSON(phi, theta, doc.length, vocab, term.frequency,
+                    R = input$nTerms))})
+
 
   output$word_time <- renderPlot({
     #selected_word <- input$search
