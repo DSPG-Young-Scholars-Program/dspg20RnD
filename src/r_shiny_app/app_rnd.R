@@ -22,12 +22,15 @@ library(tidytext)
 library(shinyWidgets)
 library(LDAvis)
 library(LDAvisData)
+library(wordcloud)
+library(tm)
 
 #load data
 
 raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
 tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
 tidy_year <- read.csv("~/tidy_year.csv")
+
 #tidy_words <- read.csv("~/tidy_words.csv")
 
 #tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
@@ -173,12 +176,31 @@ ui <- fluidPage(
 
                                    tabPanel("Word Clouds",
                                             fluidRow(width = 12,
-                                                     column(1),
                                                      column(10,
                                                             h3(strong( "Word Clouds")),
                                                             hr(),
-                                                            strong("Some people love word clouds, some people hate them"))
-                                            )),
+                                                            strong("Some people love word clouds, some people hate them"))),
+                                                     sidebarLayout(position = "right", fluid = TRUE,
+                                                       # Sidebar with a slider and selection inputs
+                                                       sidebarPanel(width = 4,
+                                                         selectInput("selection", "Choose a department:",
+                                                                     choices = list("DOD", "ED", "EPA", "HHS", "NASA", "NSF", "USDA", "VA"),
+                                                                     selected = "DOD"),
+                                                         hr(),
+                                                         sliderInput("freq",
+                                                                     "Minimum Frequency:",
+                                                                     min = 1000,  max = 500000, value = 50000),
+                                                         sliderInput("max",
+                                                                     "Maximum Number of Words:",
+                                                                     min = 1,  max = 100,  value = 50)
+                                                       ),
+
+                                                       # Show Word Cloud
+                                                       mainPanel(
+                                                         plotOutput("wordcloud")
+                                                       )
+                                                     )
+                                            ),
 
                                    tabPanel("Etc.",
                                             fluidRow(width = 12,
@@ -292,6 +314,7 @@ server <- function(input, output, session) {
       labs(x = NULL, y = "tf_idf") +
       coord_flip()
   })
+
   filtered_data <- reactive({
     dplyr::filter(tidy_year, word == input$search_term)
   })
@@ -307,16 +330,31 @@ server <- function(input, output, session) {
          createJSON(phi, theta, doc.length, vocab, term.frequency,
                     R = input$nTerms))})
 
+  output$wordcloud <- renderPlot({
+    selected_cloud <- switch(input$selection,
+                            "DOD" =
+                              tidy_abstracts[tidy_abstracts$dept == "DOD", ],
+                            "ED" =
+                              tidy_abstracts[tidy_abstracts$dept == "ED", ],
+                            "EPA" =
+                              tidy_abstracts[tidy_abstracts$dept == "EPA", ],
+                            "HHS" =
+                              tidy_abstracts[tidy_abstracts$dept == "HHS", ],
+                            "NASA" =
+                              tidy_abstracts[tidy_abstracts$dept == "NASA", ],
+                            "NSF" =
+                              tidy_abstracts[tidy_abstracts$dept == "NSF", ],
+                            "USDA" =
+                              tidy_abstracts[tidy_abstracts$dept == "USDA", ],
+                            "VA" =
+                              tidy_abstracts[tidy_abstracts$dept == "VA", ])
 
-  output$word_time <- renderPlot({
-    #selected_word <- input$search
-    tidy_year %>%
-      filter(word == "research") %>%
-      ggplot(aes(x = year, y = n)) +
-      geom_point() +
-      geom_smooth()
+    selected_cloud %>%
+      with(wordcloud(word, n, scale = c(2,0.75),
+                     min.freq = input$freq, max.words = input$max,
+                     ordered.colors = TRUE))
   })
-
 }
+
 
 shinyApp(ui = ui, server = server)
