@@ -321,8 +321,8 @@ server <- function(input, output, session) {
 
   output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
-      geom_point() +
-      geom_smooth()
+      geom_point(aes(colour = factor(year))) +
+      geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2)
   })
 
   output$myChart <- renderVis({
