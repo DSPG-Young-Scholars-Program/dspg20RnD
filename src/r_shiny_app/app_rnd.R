@@ -24,6 +24,8 @@ library(LDAvis)
 library(LDAvisData)
 library(wordcloud)
 library(tm)
+library(rbokeh)
+library(plotly)
 
 #load data
 
@@ -69,13 +71,13 @@ ui <- fluidPage(
            column(1),
            column(10,
                   p(),
-                  p('This project is for DSPG 2020 examining emerging topics in Research and Development using data from the Federal RePORTER database. Please be patient while graphs load.')),
+                  p('This project is part of the Data Science for the Public Good program examining emerging topics in Research and Development using data from the Federal RePORTER database. Please be patient while graphs load.')),
            column(1)),
   hr(),
 
   tabsetPanel(
 
-    tabPanel(h4("EDA & Profiling"),
+    tabPanel(h4("Project Intro"),
 
              fluidRow(width = 12,
                       column(12, align = 'center',
@@ -136,14 +138,15 @@ ui <- fluidPage(
 
     tabPanel(h4("Topic Models"),
 
-             fluidRow(width = 12, style = "margin: 20px 0px 20px 20px",
-                      column(2),
-                      column(1),
-                      column(12, p("Topic Modeling is a thing we have done.")),
-                      column(1)),
-
              fluidRow(width = 12, style = "margin: 20px",
                       navlistPanel(widths = c(2, 10),
+                                   tabPanel("Introduction",
+                                            fluidRow(width = 12,
+                                                     column(12, h3(strong("Introduction to Topic Modeling"))),
+                                                     column(12, p("Topic Modeling is a thing we have done. Explain the topic modeling process. Some kind of visualization and/or graph to demonstrate topic modeling? Brif explanation for the rest of the tabs and what they show.")),
+                                                     column(1))
+                                            ),
+
                                    tabPanel("LDAvis",
                                             fluidRow(width = 10,
                                                      column(1),
@@ -171,7 +174,8 @@ ui <- fluidPage(
                                                      column(1),
                                                      column(10, h3(strong( "Clusters")),
                                                             hr(),
-                                                            strong("Clusters: pictures of dots"))
+                                                            strong("Clusters: pictures of dots", a(href = "https://hafen.github.io/rbokeh/articles/rbokeh.html#design-dev-1", "Implementation of rboken"), "which might be what we use for cluster analysis.")),
+                                                     column(10, rbokehOutput("cluster"))
                                    )),
 
                                    tabPanel("Word Clouds",
@@ -354,6 +358,14 @@ server <- function(input, output, session) {
                      min.freq = input$freq, max.words = input$max,
                      ordered.colors = TRUE))
   })
+
+  output$cluster <- renderRbokeh({
+    figure() %>%
+      ly_points(Sepal.Length, Sepal.Width, data = iris,
+                color = Species, glyph = Species,
+                hover = list(Sepal.Length, Sepal.Width))
+  })
+
 }
 
 
