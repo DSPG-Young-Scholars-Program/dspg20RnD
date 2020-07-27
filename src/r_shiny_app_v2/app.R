@@ -5,6 +5,8 @@ library(shinydashboardPlus)
 library(dashboardthemes)
 library(LDAvis)
 library(LDAvisData)
+library(plotly)
+library(wordcloud)
 
 source("theme.R")
 
@@ -13,6 +15,12 @@ source("theme.R")
 raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
 tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
 tidy_year <- read.csv("~/tidy_year.csv")
+tentopics_tenwords <- read_csv("~/tentopics_tenwords.csv")
+
+tentopics_tenwords <- tentopics_tenwords %>%
+  filter(START_YEAR > 1999)
+
+#topics <- count(tentopics_tenwords, Topic)$Topic
 
   # UI ---------------------------------------------------------
 
@@ -33,17 +41,6 @@ shinyApp(
           text = "Project Overview",
           icon = icon("info circle")
         ),
-
-        menuItem(
-          tabName = "graph",
-          text = "Explore the Corpus",
-          icon = icon("map-marked-alt")
-        ),
-        menuItem(
-          tabName = "both",
-          text = "Emerging Topics",
-          icon = icon("map-marked-alt")
-        ),
         menuItem(
           tabName = "data",
           text = "Data & Methodology",
@@ -54,6 +51,25 @@ shinyApp(
           text = "Findings",
           icon = icon("chart-pie")
         ),
+
+        menuItem(
+          tabName = "graph",
+          text = "Explore the Corpus",
+          icon = icon("map-marked-alt")
+        ),
+
+        menuItem(
+          tabName = "both",
+          text = "Emerging Topics",
+          icon = icon("map-marked-alt")
+        ),
+
+        menuItem(
+          tabName = "model",
+          text = "Try Topic Modeling",
+          icon = icon("map-marked-alt")
+        ),
+
         menuItem(
           tabName = "team",
           text = "Team",
@@ -160,9 +176,12 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    h2("Images of Early Emerging Topics Graphs"),
-                    img(src = "marth_early_vis_1.jpg", width = "800px", align = "center"),
-                    img(src = "marth_early_vis_2.jpg", width = "800px", align = "center")
+                    enable_sidebar = TRUE,
+                    #sidebar_content = tagList(selectInput("Topic", "Select Topics",
+                           #                               choices = topics,
+                           #                               multiple = TRUE)),
+                    h2("Emerging Topics Graphs"),
+                    plotlyOutput("emerging")
                   )
                 )),
 
@@ -222,6 +241,19 @@ shinyApp(
                           column(width = 8, visOutput('myChart'))
                 )),
 
+        tabItem(tabName = "model",
+                fluidRow(
+                  boxPlus(
+                    title = "Try Topic Modeling for Yourself",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    h2("This is where out interactive topic modeling with a smaller corpus will go.")
+                  )
+                )),
+
         tabItem(tabName = "team",
                 fluidRow(
                   boxPlus(
@@ -234,6 +266,9 @@ shinyApp(
                     h2("DSPG Team Members"),
                     p("[Photos go about here.]"),
                     h2("UVA SDAD Team Members"),
+                    p("The Social and Decision Analytics Division (SDAD) is one of three research divisions within the Biocomplexity Institute and Initiative at the University of Virginia. SDAD combines expertise in statistics and social and behavioral sciences to develop evidence-based research and quantitative methods to inform policy decision-making and evaluation. The researchers at SDAD span many disciplines including statistics, economics, sociology, psychology, political science, policy, health IT, public health, program evaluation, and data science.
+                      The SDAD office is located near our nation's capital in Arlington, VA. You can
+                      learn more about us at", a(href = "https://biocomplexity.virginia.edu/social-decision-analytics", "https://biocomplexity.virginia.edu/social-decision-analytics"), "."),
                     p("[Photos go about here.]"),
                     h2("Project Sponsors"),
                     p("[Photos, information, and/or links about your sponsor go about here. You may want to use materials that your sponsors have already shared with you about their institution or coordinate with your stakeholders to include pertinent information here.]"),
@@ -318,5 +353,17 @@ shinyApp(
       with(Jeopardy,
            createJSON(phi, theta, doc.length, vocab, term.frequency,
                       R = input$nTerms))})
+
+    #filtered_topic <- reactive({
+      #dplyr::filter(tentopics_tenwords, Topic == input$Topic)
+    #})
+
+    output$emerging <- renderPlotly({
+      #selected_topic <- switch(input$Topic)
+      #tentopics_tenwords %>%
+        #filter(selected_topic %in% Topic) %>%
+      plot_ly(tentopics_tenwords, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines", color = tentopics_tenwords$Topic)
+    })
+
   }
 )
