@@ -2,8 +2,9 @@ library(shiny)
 library(shinyWidgets)
 library(shinydashboard)
 library(shinydashboardPlus)
-library(leaflet)
 library(dashboardthemes)
+library(LDAvis)
+library(LDAvisData)
 
 source("theme.R")
 
@@ -207,21 +208,19 @@ shinyApp(
                     h3("Results Section Three"),
                     img(src = "food_reality_chart.png", width = "400px", align = "right"),
                     p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante.")
-                  ))),
+                  )),
 
-                  #boxPlus(title = "Visualizing Topics",
-                   #       closable = FALSE,
-                    #      status = "warning",
-                     #     solidHeader = TRUE,
-                      #    collapsible = TRUE,
-                       #   width = NULL,
-                        #  enable_sidebar = TRUE,
-                         # sidebar_width = 15,
-                          #sidebar_start_open = TRUE,
-                          #sidebar_content = searchInput("search_term", label = NULL, value = "research"),
-                          #sidebar_title = "Search Term",
-                          #plotOutput("word_time")))
-                #),
+                  boxPlus(title = "Visualizing Topics with LDAvis",
+                          closable = FALSE,
+                          status = "warning",
+                          solidHeader = TRUE,
+                          collapsible = TRUE,
+                          width = NULL,
+                          enable_sidebar = FALSE,
+                          p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." ),
+                          sliderInput("nTerms", "Number of terms to display", min = 5, max = 20, value = 10),
+                          column(width = 8, visOutput('myChart'))
+                )),
 
         tabItem(tabName = "team",
                 fluidRow(
@@ -315,26 +314,9 @@ shinyApp(
                        ordered.colors = TRUE))
     })
 
-    points <- eventReactive(input$recalc, {
-      cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
-    }, ignoreNULL = FALSE)
-
-    output$mymap <- renderLeaflet({
-      leaflet() %>%
-        addProviderTiles(providers$Stamen.TonerLite,
-                         options = providerTileOptions(noWrap = TRUE)) %>%
-        addMarkers(data = points())
-    })
-
-    points2 <- eventReactive(input$recalc2, {
-      cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
-    }, ignoreNULL = FALSE)
-
-    output$mymap2 <- renderLeaflet({
-      leaflet() %>%
-        addProviderTiles(providers$Stamen.TonerLite,
-                         options = providerTileOptions(noWrap = TRUE)) %>%
-        addMarkers(data = points2())
-    })
+    output$myChart <- renderVis({
+      with(Jeopardy,
+           createJSON(phi, theta, doc.length, vocab, term.frequency,
+                      R = input$nTerms))})
   }
 )
