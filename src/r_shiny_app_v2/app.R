@@ -7,15 +7,16 @@ library(LDAvis)
 library(LDAvisData)
 library(plotly)
 library(wordcloud)
+library(tidyverse)
 
 source("theme.R")
 
   # DATA IMPORT -----------------------------------------------
 
-raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
-tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
-tidy_year <- read.csv("~/tidy_year.csv")
-tentopics_tenwords <- read_csv("~/tentopics_tenwords.csv")
+#raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/working_federal_reporter_2020.csv")
+tidy_abstracts <- read.csv("data/tidy_abstracts_dept.csv")
+tidy_year <- read.csv("data/tidy_year.csv")
+tentopics_tenwords <- read.csv("data/tentopics_tenwords.csv")
 
 tentopics_tenwords <- tentopics_tenwords %>%
   filter(START_YEAR > 1999)
