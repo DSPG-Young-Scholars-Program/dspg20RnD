@@ -123,7 +123,7 @@ shinyApp(
                     plotOutput("word_time")
                   ),
                   p("Word Frequency Over Time: Search Any Term!"),
-                  p("Note: Extremely frequently used words such as 'the', 'and', etc. have been removed as possible search terms."),
+                  p("Note: Extremely frequently used words such as 'the', 'and', etc. have been removed as possible search terms. Note the axis changes with the frequency of any given work"),
 
                   boxPlus(
                     title = "Word Frequencies",
@@ -172,7 +172,7 @@ shinyApp(
         tabItem(tabName = "both",
                 fluidRow(
                   boxPlus(
-                    title = "Emerginig Topics",
+                    title = "Emerging Topics",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
@@ -200,9 +200,7 @@ shinyApp(
                     img(src = "data_sets.png", width = "450px", align = "right"),
                     h3("Data Source"),
                     p("Federal RePORTER."),
-                    h3("Data Source 3"),
                     h2("Methodology"),
-                    p("Text"),
                     h3("Data Preparation"),
                     p("Text."),
                     h3("Data Modeling"),
@@ -221,14 +219,13 @@ shinyApp(
                     collapsible = TRUE,
                     h2("Summary of Findings"),
                     p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante."),
-                    h3("Results Section One"),
-                    img(src = "irrational_venn_diagram.png", width = "360px", align = "right"),
-                    p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante."),
-                    h3("Results Section Two"),
-                    p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante."),
-                    h3("Results Section Three"),
-                    img(src = "food_reality_chart.png", width = "400px", align = "right"),
-                    p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante.")
+                    h3("Choosing Optimal Models"),
+                    p("LDA vs NMF. Choosing number of topic. Semantic coherence."),
+                    h3("Top Emerging/Receeding Topics in depth"),
+                    p("Wow! This topic has grown so much! How interesting!"),
+                    h3("Pandemics Results"),
+                    #img(src = "food_reality_chart.png", width = "400px", align = "right"),
+                    p("Interesting findings about pandemics because we are in one.")
                   )),
 
                   boxPlus(title = "Visualizing Topics with LDAvis",
@@ -252,7 +249,7 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    h2("This is where out interactive topic modeling with a smaller corpus will go.")
+                    h2("This is where our interactive topic modeling with a smaller corpus will go.")
                   )
                 )),
 
