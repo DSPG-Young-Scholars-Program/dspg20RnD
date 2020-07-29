@@ -33,6 +33,9 @@ raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_feder
 tidy_abstracts <- read.csv("~/tidy_abstracts_dept.csv")
 tidy_year <- read.csv("~/tidy_year.csv")
 
+library(readr)
+tentopics_tenwords <- read_csv("~/tentopics_tenwords.csv")
+
 #tidy_words <- read.csv("~/tidy_words.csv")
 
 #tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
