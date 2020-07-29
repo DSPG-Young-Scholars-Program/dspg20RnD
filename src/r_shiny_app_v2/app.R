@@ -4,7 +4,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(dashboardthemes)
 library(LDAvis)
-library(LDAvisData)
+#library(LDAvisData)
 library(plotly)
 library(wordcloud)
 library(tidyverse)
@@ -238,9 +238,9 @@ shinyApp(
                           collapsible = TRUE,
                           width = NULL,
                           enable_sidebar = FALSE,
-                          p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." ),
-                          sliderInput("nTerms", "Number of terms to display", min = 5, max = 20, value = 10),
-                          column(width = 8, visOutput('myChart'))
+                          p( "LDAvis comes from", a(href = "https://nlp.stanford.edu/events/illvi2014/papers/sievert-illvi2014.pdf", "LDAvis: A method for visualizing and interpreting topics"), "by Sievert and Shirley." )#,
+                          #sliderInput("nTerms", "Number of terms to display", min = 5, max = 20, value = 10),
+                          #column(width = 8, visOutput('myChart'))
                 )),
 
         tabItem(tabName = "model",
@@ -351,10 +351,10 @@ shinyApp(
                        ordered.colors = TRUE))
     })
 
-    output$myChart <- renderVis({
-      with(Jeopardy,
-           createJSON(phi, theta, doc.length, vocab, term.frequency,
-                      R = input$nTerms))})
+    #output$myChart <- renderVis({
+      #with(Jeopardy,
+           #createJSON(phi, theta, doc.length, vocab, term.frequency,
+                      #R = input$nTerms))})
 
     #filtered_topic <- reactive({
       #dplyr::filter(tentopics_tenwords, Topic == input$Topic)

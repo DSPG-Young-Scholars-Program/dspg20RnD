@@ -1,0 +1,12 @@
+name: rnd_shiny_app
+title: rnd_shiny_app
+username:
+account: dads2busy
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2624166
+bundleId: 3450790
+url: https://dads2busy.shinyapps.io/rnd_shiny_app/
+when: 1596035248.71524
+asMultiple: FALSE
+asStatic: FALSE
