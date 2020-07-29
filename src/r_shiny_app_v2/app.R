@@ -8,6 +8,7 @@ library(LDAvisData)
 library(plotly)
 library(wordcloud)
 library(tidyverse)
+library(ggplot2)
 
 source("theme.R")
 
@@ -93,15 +94,15 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    h1("RnD Abstracts: Emerging Topic Identification and Development of Visualization Tools"),
+                    h3(strong("RnD Abstracts: Emerging Topic Identification and Development of Visualization Tools")),
                     h2("Project Description"),
-                    p("Partnered with the National Center for Science and Engineering Statistics, our team analyzed abstracts of federally funded research and development grants from 2008-2019. We used topic modeling, an unsupervised machine learning method, to identify topics across the abstracts and find which topics are emerging in popularity, and which are declining."),
+                    p("Partnered with the National Center for Science and Engineering Statistics Research & Development Statistics Program, our team analyzed abstracts of federally funded research and development grants from 2008-2019. We used topic modeling, an unsupervised machine learning method, to identify topics across the abstracts and find which topics are emerging in popularity, and which are declining."),
                     h2("Project Goals"),
                     p("This project had two main goals. First, to identify emerging research topics across time utilizing topic models and visualization techniques. Second, to present topic model outputs visually in a cohesive way."),
                     h2("Our Approach"),
-                    p("Using an abstract corpus from the Federal RePORTER database, we used Latent Dirichlet Allocation topic models to identify emerging topics within the dataset."),
+                    p("Topic model techniques may include Latent Dirichlet Allocation, Nonnegative Matrix Factorization, and hierarchical models."),
                     h2("Ethical Considerations"),
-                    p("We considered ethics.")
+                    p("Throughout our work on this project, we thought through the ethical implications of our work. We recognize that our so-called 'emerging' topics only encompass government funded grants within the United States and thus does not necessarily represent the full scope of research and development in the United States or around the world. We also recognize that there exists an", a(href = "https://iaphs.org/identifying-implicit-bias-grant-reviews/", "implicit bias in research funding"), "that we do not address within the scope of this project. That being said, we decided the project would be beneficial for understanding where funding is allocated, potentially allowing for adjustments to be made. We also did not directly examine any specific individuals or demograph group, and our dataset is publically available." )
                   )
                 )),
 

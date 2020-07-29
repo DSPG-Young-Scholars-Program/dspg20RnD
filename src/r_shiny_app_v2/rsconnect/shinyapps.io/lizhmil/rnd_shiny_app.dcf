@@ -5,8 +5,8 @@ account: lizhmil
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2619891
-bundleId: 3445913
+bundleId: 3450509
 url: https://lizhmil.shinyapps.io/rnd_shiny_app/
-when: 1595943338.60165
+when: 1596030860.89182
 asMultiple: FALSE
 asStatic: FALSE
