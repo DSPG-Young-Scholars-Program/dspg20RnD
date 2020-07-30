@@ -1,13 +1,13 @@
 #Create files for import into shiny app
 
-raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/original/working_federal_reporter_2020.csv")
+final_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/final/app_data.csv")
 
 library(tidyverse)
 library(tidytext)
 
 #tidied abstracts
 
-tidy_words <- tibble(text = raw_abstracts$ABSTRACT)
+tidy_words <- tibble(text = final_abstracts$final_frqwds_removed)
 
 tidy_words <- tidy_words %>%
   unnest_tokens(word, text) %>%
@@ -16,7 +16,7 @@ tidy_words <- tidy_words %>%
 write.csv(tidy_words, "tidy_words.csv")
 
 #Abstracts tidied by department
-tidy_abstracts <- tibble(dept = raw_abstracts$DEPARTMENT, text = raw_abstracts$ABSTRACT)
+tidy_abstracts <- tibble(dept = final_abstracts$DEPARTMENT, text = final_abstracts$final_frqwds_removed)
 
 tidy_abstracts <- tidy_abstracts %>%
   unnest_tokens(word, text) %>%
@@ -38,7 +38,7 @@ tidy_abstracts <- tidy_abstracts %>%
 write.csv(tidy_abstracts, "tidy_abstracts_dept.csv")
 
 #Abstracts tidied by year
-tidy_year <- tibble(year = raw_abstracts$FY.x, text = raw_abstracts$ABSTRACT)
+tidy_year <- tibble(year = raw_abstracts$FY, text = final_abstracts$final_frqwds_removed)
 
 tidy_year <- tidy_year %>%
   unnest_tokens(word, text) %>%
