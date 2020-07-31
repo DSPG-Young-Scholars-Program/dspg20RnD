@@ -245,6 +245,10 @@ shinyApp(
                       "•	lemmatization", br(),
                       "•	bag o words
                       "),
+                    img(src = "ab_length_hist.jpeg"),
+                    img(src = "department_bar.jpeg"),
+                    img(src = "FY_bar.jpeg"),
+                    img(src = "proj_start_year_bar.jpeg"),
                     h3("Data Modeling"),
                     p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
                       br(),
@@ -253,7 +257,7 @@ shinyApp(
                       "We examined two topic modeling frameworks over the course of this project:",
                       br(),
                       "-Latent Dirichlet Allocation  (LDA) - Probabilistic process: \"What is most likely distribution of topics across each documents?\" ",
-                      br(), 
+                      br(),
                       "-Non-negative Matrix Factorization (NMF) - Iterative process: \"Based on word frequency and association, where do we find clusters of words and what does each cluster signify?\"
                       ")
                   )
@@ -535,7 +539,8 @@ shinyApp(
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
         geom_point(aes(colour = factor(year))) +
-        geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2)
+        geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2) +
+        theme_bw()
     })
 
     output$important_words <- renderPlot({
@@ -567,7 +572,8 @@ shinyApp(
         ggplot(aes(word, tf_idf, fill = dept)) +
         geom_col(show.legend = FALSE) +
         labs(x = "word", y = "weight by department") +
-        coord_flip()
+        coord_flip() +
+        theme_bw()
     })
 
     output$wordcloud <- renderPlot({
