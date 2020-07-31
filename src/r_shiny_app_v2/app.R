@@ -62,7 +62,7 @@ shinyApp(
 
         menuItem(
           tabName = "both",
-          text = " Hot & Cold Topics",
+          text = "  Hot & Cold Topics",
           icon = icon("hotjar")
         ),
 
@@ -219,15 +219,43 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    h2("Data Sources"),
+                    h2("Data Source"),
                     #img(src = "data_sets.png", width = "450px", align = "right"),
-                    h3("Data Source"),
-                    p("Federal RePORTER."),
+                    h3("Federal RePORTER"),
+                    p("We downloaded the data from ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), " a website that allows users to access \"a repository of data and tools that will be useful to assess the impact of federal R&D investments...\" by enabling \"documentation and analysis of inputs, outputs, and outcomes resulting from federal investments in science.\"" ,
+                      br(),
+                       "A previous DSPG project (2019) used data from 2008-2018, however we updated the data include 2019. The data consists of abstracts from each grant as well as grant metadata from 1+ million R&D grants from 2008-2019. Some columns (metadata) interest include Fiscal Year, Project Title, Agency, and Principal Investigator.
+                      "),
                     h2("Methodology"),
                     h3("Data Preparation"),
-                    p("Text."),
+                    p("•	Because abstracts are the main source of information that is project analyzed, any rows with NA or \"No Abstract Provided\" in the \"ABSTRACT\" field were removed.",
+                      br(),
+                      "•	Date columns that had NA values were filled where possible with information from other date columns.",
+                      br() ,
+                      "•	We removed duplicate rows based on whether rows had matching ABSTRACT, PROJECT_TITLE and PROJECT_START_DATE. For the rows that were identified as duplicate, the latest PROJECT_END_DATE was preserved, and the number of unique ORGANIZATIONs and Principal Investigators were recorded.",
+                      br(),
+                      "•	lowercase all abstracts", br(),
+                      "•	remove: ", br(),
+                      "o	white space & punctuation", br(),
+                      "o	\"junk\" phrases throughout (ex. \"DESCRIPTION: Provided by applicant\", \"Background\", \"Intellectual merit\")",
+                      br() ,
+                      "o	Abstracts less than 150 characters", br(),
+                      "o	Other data fields found within abstract", br(),
+                      "•	stop word removal", br(),
+                      "•	lemmatization", br(),
+                      "•	bag o words
+                      "),
                     h3("Data Modeling"),
-                    p("Text.")
+                    p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
+                      br(),
+                      "Rather than view each document strictly as a collection of words, one can use topic modeling to insert an additional level of analysis: each document is composed of a distribution of topics, and each topic is a collection of thematically interrelated words. This distinction allows for more focused data analysis, since analyzing a corpus at the topic level can refine a sprawling jumble of thousands of documents into an interpretable, manageable dataset.",
+                      br(),
+                      "We examined two topic modeling frameworks over the course of this project:",
+                      br(),
+                      "-Latent Dirichlet Allocation  (LDA) - Probabilistic process: \"What is most likely distribution of topics across each documents?\" ",
+                      br(), 
+                      "-Non-negative Matrix Factorization (NMF) - Iterative process: \"Based on word frequency and association, where do we find clusters of words and what does each cluster signify?\"
+                      ")
                   )
                 )),
 
