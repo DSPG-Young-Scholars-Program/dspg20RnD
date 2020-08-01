@@ -1,7 +1,11 @@
 
 data_for_liz %>%
-  ggplot(aes(x = DEPARTMENT, fill = DEPARTMENT)) +
-  geom_bar(show.legend = FALSE) +
+  count(DEPARTMENT) %>%
+  mutate(perc = (n / nrow(data_for_liz)) *100) %>%
+  ggplot(aes(x = DEPARTMENT, y = perc, fill = DEPARTMENT)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  ylim(0, 100) +
+  labs(x = "Department", y = "Percent of Dataset") +
   ggtitle("Abstract Count by Funding Department") +
   theme_bw()
 
@@ -29,7 +33,8 @@ min(data_for_liz$ab_char)
 max(data_for_liz$ab_char)
 
 data_for_liz %>%
+  filter(ab_char < 10001) %>%
   ggplot(aes(x = ab_char)) +
-  geom_histogram(binwidth = 100) +
+  geom_histogram(binwidth = 100, fill = "#0072B2") +
   ggtitle("Number of Characters per Abstracts") +
   theme_bw()

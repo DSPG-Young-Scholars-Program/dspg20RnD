@@ -245,12 +245,15 @@ shinyApp(
                       "•	lemmatization", br(),
                       "•	bag o words
                       "),
-                    img(src = "ab_length_hist.jpeg"),
-                    img(src = "department_bar.jpeg"),
-                    img(src = "FY_bar.jpeg"),
-                    img(src = "proj_start_year_bar.jpeg"),
-                    h3("Data Modeling"),
-                    p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
+                    column(5,
+                    img(src = "char_histogram.jpeg", width = "600px", height = "400px"), align = "right"),
+                    column(2, align = "center"),
+                    column(5, img(src = "dept_bar.jpeg", width = "600px", height = "400px"), align = "left"),
+                    column(6, img(src = "proj_start_year_bar.jpeg", width = "600px", height = "400px"), align = "right"),
+                    column(6, align = "left"),
+                    br(),
+                    column(12, h3("Data Modeling")),
+                    column(12, p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
                       br(),
                       "Rather than view each document strictly as a collection of words, one can use topic modeling to insert an additional level of analysis: each document is composed of a distribution of topics, and each topic is a collection of thematically interrelated words. This distinction allows for more focused data analysis, since analyzing a corpus at the topic level can refine a sprawling jumble of thousands of documents into an interpretable, manageable dataset.",
                       br(),
@@ -259,7 +262,7 @@ shinyApp(
                       "-Latent Dirichlet Allocation  (LDA) - Probabilistic process: \"What is most likely distribution of topics across each documents?\" ",
                       br(),
                       "-Non-negative Matrix Factorization (NMF) - Iterative process: \"Based on word frequency and association, where do we find clusters of words and what does each cluster signify?\"
-                      ")
+                      "))
                   )
                 )),
 
