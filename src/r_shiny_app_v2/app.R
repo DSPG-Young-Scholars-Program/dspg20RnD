@@ -13,15 +13,14 @@ source("theme.R")
 
   # DATA IMPORT -----------------------------------------------
 
-#raw_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/working_federal_reporter_2020.csv")
 tidy_abstracts <- read.csv("data/tidy_abstracts_dept.csv")
 tidy_year <- read.csv("data/tidy_year.csv")
-tentopics_tenwords <- read.csv("data/tentopics_tenwords.csv")
-
-tentopics_tenwords <- tentopics_tenwords %>%
-  filter(START_YEAR > 2009)
-
-#topics <- count(tentopics_tenwords, Topic)$Topic
+pandemic_topic <- read.csv("data/pandemic_topic.csv")
+pandemic <- read.csv("data/thirtypandemictopics.csv")
+corona_topic <- read.csv("data/corona_topic.csv")
+corona <- read.csv("data/thirtycoronatopics.csv")
+all_topics <- read.csv("data/all_topics.csv")
+topics <- read.csv("data/seventyfivetopicsdf.csv")
 
   # UI ---------------------------------------------------------
 
@@ -38,6 +37,12 @@ shinyApp(
       sidebarMenu(
         id = "tabs",
         menuItem(
+          tabName = "homepage",
+          text = "Home Page",
+          icon = icon("home")
+        ),
+
+        menuItem(
           tabName = "overview",
           text = "Project Overview",
           icon = icon("info circle")
@@ -47,12 +52,6 @@ shinyApp(
           text = "Data & Methodology",
           icon = icon("database")
         ),
-
-        #menuItem(
-         # tabName = "findings",
-          #text = "Findings",
-          #icon = icon("chart-pie")
-        #),
 
         menuItem(
           tabName = "graph",
@@ -85,6 +84,21 @@ shinyApp(
       customTheme,
       fluidPage(
       tabItems(
+        tabItem(tabName = "homepage",
+                fluidRow(
+                  boxPlus(
+                    title = "Home Page",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    column(12, img(src = "uva-dspg-logo.jpg"), align = "center"),
+                    column(12, h1("UVA Biocomplexity Institute"), align = "center"),
+                    column(12, h2("R&D Abstracts: Emerging Topic Identification"), align = "center")
+
+                  ))),
+
         tabItem(tabName = "overview",
                 fluidRow(
                   boxPlus(
@@ -220,7 +234,6 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     h2("Data Source"),
-                    #img(src = "data_sets.png", width = "450px", align = "right"),
                     h3("Federal RePORTER"),
                     p("We downloaded the data from ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), " a website that allows users to access \"a repository of data and tools that will be useful to assess the impact of federal R&D investments...\" by enabling \"documentation and analysis of inputs, outputs, and outcomes resulting from federal investments in science.\"" ,
                       br(),
@@ -245,38 +258,26 @@ shinyApp(
                       "•	lemmatization", br(),
                       "•	bag o words
                       "),
-                    h3("Data Modeling"),
-                    p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
+                    column(4,
+                    img(src = "char_histogram.jpeg", width = "450px", height = "300px"), align = "right"),
+                    column(2, align = "center"),
+                    column(4, img(src = "dept_bar.jpeg", width = "450px", height = "300px"), align = "left"),
+                    column(4, img(src = "proj_start_year_bar.jpeg", width = "450px", height = "300px"), align = "right"),
+                    column(4, align = "left"),
+                    br(),
+                    column(12, h3("Data Modeling")),
+                    column(12, p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue.",
                       br(),
                       "Rather than view each document strictly as a collection of words, one can use topic modeling to insert an additional level of analysis: each document is composed of a distribution of topics, and each topic is a collection of thematically interrelated words. This distinction allows for more focused data analysis, since analyzing a corpus at the topic level can refine a sprawling jumble of thousands of documents into an interpretable, manageable dataset.",
                       br(),
                       "We examined two topic modeling frameworks over the course of this project:",
                       br(),
                       "-Latent Dirichlet Allocation  (LDA) - Probabilistic process: \"What is most likely distribution of topics across each documents?\" ",
-                      br(), 
+                      br(),
                       "-Non-negative Matrix Factorization (NMF) - Iterative process: \"Based on word frequency and association, where do we find clusters of words and what does each cluster signify?\"
-                      ")
+                      "))
                   )
                 )),
-
-        #tabItem(tabName = "findings",
-                #fluidRow(
-                  #boxPlus(
-                    #title = "Findings",
-                    #closable = FALSE,
-                  #  width = NULL,
-                   # status = "warning",
-              #      solidHeader = TRUE,
-               #     collapsible = TRUE,
-                 #   h2("Summary of Findings"),
-              #      p("Example text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in varius purus. Nullam ut sodales ante."),
-                 #   h3("Choosing Optimal Models"),
-                #    p("LDA vs NMF. Choosing number of topic. Semantic coherence."),
-               #     h3("Top Emerging/Receeding Topics in depth"),
-                #    p("Wow! This topic has grown so much! How interesting!"),
-                #    h3("Pandemics Results"),
-                 #   p("Interesting findings about pandemics because we are in one.")
-               #   ))),
 
         tabItem(tabName = "model",
                 fluidRow(
@@ -298,9 +299,9 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Pandemics."), align = 'center')
-                    #column(12, plotlyOutput("emerging")),
-                    #column(12, dataTableOutput("emerging_topics"))
+                    column(12, h2("Pandemics."), align = 'center'),
+                    column(12, plotlyOutput("pandemics")),
+                    column(12, dataTableOutput("pandemics_topics"))
                   ),
 
                   boxPlus(
@@ -312,10 +313,8 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus."), align = 'center'),
-                    p("plot output like above"),
-                    p("data table output like above")
-                    #plotlyOutput("emerging"),
-                    #dataTableOutput("emerging_topics")
+                    plotlyOutput("coronavirus"),
+                    dataTableOutput("coronavirus_topics")
                   )
                 )),
 
@@ -535,7 +534,8 @@ shinyApp(
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
         geom_point(aes(colour = factor(year))) +
-        geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2)
+        geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2) +
+        theme_bw()
     })
 
     output$important_words <- renderPlot({
@@ -567,7 +567,8 @@ shinyApp(
         ggplot(aes(word, tf_idf, fill = dept)) +
         geom_col(show.legend = FALSE) +
         labs(x = "word", y = "weight by department") +
-        coord_flip()
+        coord_flip() +
+        theme_bw()
     })
 
     output$wordcloud <- renderPlot({
@@ -595,19 +596,29 @@ shinyApp(
                        ordered.colors = TRUE))
     })
 
-    #filtered_topic <- reactive({
-      #dplyr::filter(tentopics_tenwords, Topic == input$Topic)
-    #})
-
     output$emerging <- renderPlotly({
-      #selected_topic <- switch(input$Topic)
-      #tentopics_tenwords %>%
-        #filter(selected_topic %in% Topic) %>%
-      plot_ly(tentopics_tenwords, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = tentopics_tenwords$Topic)
+
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = topics$Topic)
     })
 
     output$emerging_topics <- renderDataTable({
-      datatable(tentopics_tenwords)
+      datatable(all_topics)
+    })
+
+    output$pandemics <- renderPlotly({
+      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic)
+    })
+
+    output$pandemics_topics <- renderDataTable({
+      datatable(pandemic_topic)
+    })
+
+    output$coronavirus <- renderPlotly({
+      plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic)
+    })
+
+    output$coronavirus_topics <- renderDataTable({
+      datatable(corona_topic)
     })
 
   }
