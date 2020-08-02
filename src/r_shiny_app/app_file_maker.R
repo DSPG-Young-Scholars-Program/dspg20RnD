@@ -46,3 +46,43 @@ tidy_year <- tidy_year %>%
   count(year, word, sort = TRUE)
 
 write.csv(tidy_year, "tidy_year.csv")
+
+#All topics
+all_topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf (2).csv")
+all_topics <- all_topics %>%
+  filter(START_YEAR > 2009)
+
+write.csv(all_topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf.csv")
+
+topics <- all_topics %>%
+  group_by(Topic, `Top 10 Words`) %>%
+  summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = " "))
+
+write.csv(topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/all_topics.csv")
+
+#Coronavirus topics
+corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINALthirtycoronatopics (2).csv")
+corona <- corona %>%
+  filter(START_YEAR > 2009)
+
+write.csv(corona, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtycoronatopics.csv")
+
+corona_topic <- corona %>%
+  group_by(Topic, `Top 10 Words`) %>%
+  summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = ""))
+
+write.csv(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_topic.csv")
+
+#Pandemics topics
+
+pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINALthirtypandemictopics (1).csv")
+pandemic <- pandemic %>%
+  filter(START_YEAR > 2009)
+
+write.csv(pandemic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtypandemictopics.csv")
+
+pandemic_topic <- pandemic %>%
+  group_by(Topic, `Top 10 Words`) %>%
+  summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = " "))
+
+write.csv(pandemic_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/pandemic_topic.csv")
