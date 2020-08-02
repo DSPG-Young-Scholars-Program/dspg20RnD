@@ -233,6 +233,7 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
+
                     h2("Data Source"),
                     h3("Federal RePORTER"),
                     p("We downloaded the data from ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), " a website that allows users to access \"a repository of data and tools that will be useful to assess the impact of federal R&D investments...\" by enabling \"documentation and analysis of inputs, outputs, and outcomes resulting from federal investments in science.\"" ,
@@ -303,7 +304,6 @@ shinyApp(
                     column(12, plotlyOutput("pandemics")),
                     column(12, dataTableOutput("pandemics_topics"))
                   ),
-
                   boxPlus(
                     title = "Case Study 2: Coronavirus",
                     closable = FALSE,
