@@ -303,7 +303,6 @@ shinyApp(
                     column(12, plotlyOutput("pandemics")),
                     column(12, dataTableOutput("pandemics_topics"))
                   ),
-
                   boxPlus(
                     title = "Case Study 2: Coronavirus",
                     closable = FALSE,
