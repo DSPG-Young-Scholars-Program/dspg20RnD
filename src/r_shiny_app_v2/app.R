@@ -61,8 +61,8 @@ shinyApp(
 
         menuItem(
           tabName = "both",
-          text = "  Hot & Cold Topics",
-          icon = icon("hotjar")
+          text = "Hot & Cold Topics",
+          icon = icon("fire")
         ),
 
         menuItem(
@@ -707,7 +707,7 @@ shinyApp(
 
     output$emerging <- renderPlotly({
 
-      plot_ly(topics, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = topics$Topic)
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic)
     })
 
     output$emerging_topics <- renderDataTable({
