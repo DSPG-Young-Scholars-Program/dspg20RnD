@@ -13,14 +13,14 @@ source("theme.R")
 
   # DATA IMPORT -----------------------------------------------
 
-tidy_abstracts <- read.csv("data/tidy_abstracts_dept.csv")
-tidy_year <- read.csv("data/tidy_year.csv")
-pandemic_topic <- read.csv("data/pandemic_topic.csv")
-pandemic <- read.csv("data/thirtypandemictopics.csv")
-corona_topic <- read.csv("data/corona_topic.csv")
-corona <- read.csv("data/thirtycoronatopics.csv")
-all_topics <- read.csv("data/all_topics.csv")
-topics <- read.csv("data/seventyfivetopicsdf.csv")
+tidy_abstracts <- readRDS("data/tidy_abstracts_dept.rds")
+tidy_year <- readRDS("data/tidy_year.rds")
+pandemic_topic <- readRDS("data/pandemic_topic.rds")
+pandemic <- readRDS("data/thirtypandemictopics.rds")
+corona_topic <- readRDS("data/corona_topic.rds")
+corona <- readRDS("data/thirtycoronatopics.rds")
+all_topics <- readRDS("data/all_topics.rds")
+topics <- readRDS("data/seventyfivetopicsdf.rds")
 
   # UI ---------------------------------------------------------
 
@@ -61,8 +61,8 @@ shinyApp(
 
         menuItem(
           tabName = "both",
-          text = "  Hot & Cold Topics",
-          icon = icon("hotjar")
+          text = "Hot & Cold Topics",
+          icon = icon("fire")
         ),
 
         menuItem(
@@ -134,7 +134,7 @@ shinyApp(
                     sidebar_start_open = TRUE,
                     sidebar_content = searchInput("search_term", label = "Enter search term", value = "keyword"),
                     sidebar_title = "Search Term",
-                    column(12, p(strong("Word Frequency Over Time: Search Any Term!")), align = 'center'),
+                    #column(12, p(strong("Word Frequency Over Time: Search Any Term!")), align = 'center'),
                     column(10, plotOutput("word_time")),
                     column(10, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
                   ),
@@ -334,7 +334,7 @@ shinyApp(
                       "Takeaway: Determines \"sensitivity\" to presence of potential topics in a document ",
                       br(),
                       br(),
-                      
+
                       "Eta (η)  ",
                       br(),
                       "Conceptual: topic-word density. higher beta -> topics are made up of more of the words in the corpus.  ",
@@ -642,6 +642,7 @@ shinyApp(
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
         geom_point(aes(colour = factor(year))) +
+        labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color ='Year') +
         geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2) +
         theme_bw()
     })
@@ -706,7 +707,7 @@ shinyApp(
 
     output$emerging <- renderPlotly({
 
-      plot_ly(topics, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = topics$Topic)
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic)
     })
 
     output$emerging_topics <- renderDataTable({

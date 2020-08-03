@@ -7,16 +7,17 @@ library(tidytext)
 
 #tidied abstracts
 
-tidy_words <- tibble(text = final_abstracts$final_frqwds_removed)
+#tidy_words <- tibble(text = final_abstracts$ABSTRACT)
 
-tidy_words <- tidy_words %>%
-  unnest_tokens(word, text) %>%
-  count(word, sort = TRUE)
+#tidy_words <- tidy_words %>%
+ #unnest_tokens(word, text) %>%
+  #anti_join(stop_words) %>%
+  #count(word, sort = TRUE)
 
-write.csv(tidy_words, "tidy_words.csv")
+#saveRDS(tidy_words, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_words.rds")
 
 #Abstracts tidied by department
-tidy_abstracts <- tibble(dept = final_abstracts$DEPARTMENT, text = final_abstracts$final_frqwds_removed)
+tidy_abstracts <- tibble(dept = final_abstracts$DEPARTMENT, text = final_abstracts$ABSTRACT)
 
 tidy_abstracts <- tidy_abstracts %>%
   unnest_tokens(word, text) %>%
@@ -35,54 +36,62 @@ tidy_abstracts <- tidy_abstracts %>%
 tidy_abstracts <- tidy_abstracts %>%
   select(dept, word, n, tf_idf)
 
-write.csv(tidy_abstracts, "tidy_abstracts_dept.csv")
+saveRDS(tidy_abstracts, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_abstracts_dept.rds")
 
 #Abstracts tidied by year
-tidy_year <- tibble(year = raw_abstracts$FY, text = final_abstracts$final_frqwds_removed)
+library(stringr)
+
+final_abstracts$Year <- final_abstracts$PROJECT_START_DATE %>%
+  str_sub(-4, -1)
+
+tidy_year <- tibble(year = final_abstracts$Year, text = final_abstracts$ABSTRACT)
 
 tidy_year <- tidy_year %>%
+  filter(year > 2009) %>%
   unnest_tokens(word, text) %>%
   anti_join(stop_words) %>%
   count(year, word, sort = TRUE)
 
-write.csv(tidy_year, "tidy_year.csv")
+tidy_year$year <- as.numeric(tidy_year$year)
+
+saveRDS(tidy_year, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_year.rds")
 
 #All topics
-all_topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf (2).csv")
-all_topics <- all_topics %>%
+topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINAL_UPDATED_seventy_fivetopics.csv")
+topics <- all_topics %>%
   filter(START_YEAR > 2009)
 
-write.csv(all_topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf.csv")
+saveRDS(topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf.rds")
 
-topics <- all_topics %>%
+all_topics <- topics %>%
   group_by(Topic, `Top 10 Words`) %>%
   summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = " "))
 
-write.csv(topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/all_topics.csv")
+saveRDS(all_topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/all_topics.rds")
 
 #Coronavirus topics
-corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINALthirtycoronatopics (2).csv")
+corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINAL_UPDATEDthirtycoronatopics.csv")
 corona <- corona %>%
   filter(START_YEAR > 2009)
 
-write.csv(corona, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtycoronatopics.csv")
+saveRDS(corona, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtycoronatopics.rds")
 
 corona_topic <- corona %>%
   group_by(Topic, `Top 10 Words`) %>%
   summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = ""))
 
-write.csv(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_topic.csv")
+saveRDS(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_topic.rds")
 
 #Pandemics topics
 
-pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINALthirtypandemictopics (1).csv")
+pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/FINAL_UPDATEDthirtypandemictopics.csv")
 pandemic <- pandemic %>%
   filter(START_YEAR > 2009)
 
-write.csv(pandemic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtypandemictopics.csv")
+saveRDS(pandemic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtypandemictopics.rds")
 
 pandemic_topic <- pandemic %>%
   group_by(Topic, `Top 10 Words`) %>%
   summarise(`Top 10 Words` = paste0(unique(`Top 10 Words`), collapse = " "))
 
-write.csv(pandemic_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/pandemic_topic.csv")
+saveRDS(pandemic_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/pandemic_topic.rds")
