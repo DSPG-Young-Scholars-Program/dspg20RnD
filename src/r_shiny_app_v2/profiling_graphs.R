@@ -18,7 +18,8 @@ data_for_liz %>%
   theme_bw()
 
 data_for_liz %>%
-  filter(START_DATE > 1999) %>%
+  filter(START_DATE > 2007) %>%
+  filter(START_DATE < 2020) %>%
   ggplot(aes(x = as.factor(START_DATE), fill = as.factor(START_DATE))) +
   geom_bar(show.legend = FALSE) +
   xlab("Year") +
