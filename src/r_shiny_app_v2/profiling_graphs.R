@@ -7,7 +7,7 @@ data_for_liz %>%
   ylim(0, 100) +
   labs(x = "Department", y = "Percent of Dataset") +
   ggtitle("Abstract Count by Funding Department") +
-  theme_bw()
+  theme_bw() -> dept_gr
 
 
 data_for_liz %>%
@@ -25,7 +25,7 @@ data_for_liz %>%
   ggtitle("Abstract Count by Project Start Year") +
   #labs(main = "Abstract Count by Project Start Year", x = "Year") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 30))
+  theme(axis.text.x = element_text(angle = 30)) -> date_gr
 
 data_for_liz$ab_char <- nchar(data_for_liz$ABSTRACT)
 mean(data_for_liz$ab_char)
@@ -37,4 +37,8 @@ data_for_liz %>%
   ggplot(aes(x = ab_char)) +
   geom_histogram(binwidth = 100, fill = "#0072B2") +
   ggtitle("Number of Characters per Abstracts") +
-  theme_bw()
+  theme_bw() -> char_hist
+
+grid.arrange(dept_gr, date_gr, char_hist, nrow = 2)
+
+
