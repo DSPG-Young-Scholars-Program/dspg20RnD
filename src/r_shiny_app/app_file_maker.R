@@ -84,7 +84,7 @@ saveRDS(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_
 
 #Pandemics topics
 
-pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/8.4.Thirty_Pandemic_Topics (2).csv")
+pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/Thirty_Pandemics (2).csv")
 pandemic <- pandemic %>%
   filter(START_YEAR > 2009)
 
