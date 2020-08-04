@@ -686,7 +686,7 @@ shinyApp(
 
     output$emerging <- renderPlotly({
 
-      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = corona$Topic_Legend)
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = topics$Topic_Legend)
     })
 
     output$emerging_topics <- DT::renderDataTable({
