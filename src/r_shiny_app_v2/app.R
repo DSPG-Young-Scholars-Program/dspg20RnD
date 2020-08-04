@@ -212,7 +212,7 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Emerging Topics: These topics have seen an increase over time within our dataset."), align = 'center'),
                     column(12, plotlyOutput("emerging")),
-                    column(12, dataTableOutput("emerging_topics"))
+                    column(12, DT::dataTableOutput("emerging_topics"))
                   ),
 
                   boxPlus(
@@ -357,7 +357,7 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Pandemics."), align = 'center'),
                     column(12, plotlyOutput("pandemics")),
-                    column(12, dataTableOutput("pandemics_topics"))
+                    column(12, DT::dataTableOutput("pandemics_topics"))
                   ),
                   boxPlus(
                     title = "Case Study 2: Coronavirus",
@@ -369,7 +369,7 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus."), align = 'center'),
                     plotlyOutput("coronavirus"),
-                    dataTableOutput("coronavirus_topics")
+                    DT::dataTableOutput("coronavirus_topics")
                   )
                 )),
 
@@ -657,15 +657,15 @@ shinyApp(
       plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic)
     })
 
-    output$emerging_topics <- renderDataTable({
+    output$emerging_topics <- DT::renderDataTable({
       datatable(all_topics)
     })
 
     output$pandemics <- renderPlotly({
-      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic)
+      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = pandemic$Topic)
     })
 
-    output$pandemics_topics <- renderDataTable({
+    output$pandemics_topics <- DT::renderDataTable({
       datatable(pandemic_topic)
     })
 
@@ -673,7 +673,7 @@ shinyApp(
       plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic)
     })
 
-    output$coronavirus_topics <- renderDataTable({
+    output$coronavirus_topics <- DT::renderDataTable({
       datatable(corona_topic)
     })
 
