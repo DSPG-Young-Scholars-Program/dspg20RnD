@@ -2,12 +2,12 @@
 data_for_liz %>%
   count(DEPARTMENT) %>%
   mutate(perc = (n / nrow(data_for_liz)) *100) %>%
-  ggplot(aes(x = DEPARTMENT, y = perc, fill = DEPARTMENT)) +
+  ggplot(aes(x = reorder(DEPARTMENT, -perc), y = perc, fill = DEPARTMENT)) +
   geom_bar(stat = "identity", show.legend = FALSE) +
   ylim(0, 100) +
   labs(x = "Department", y = "Percent of Dataset") +
   ggtitle("Abstract Count by Funding Department") +
-  theme_bw()
+  theme_bw() -> dept_gr
 
 
 data_for_liz %>%
@@ -18,14 +18,16 @@ data_for_liz %>%
   theme_bw()
 
 data_for_liz %>%
-  filter(START_DATE > 1999) %>%
+  filter(START_DATE > 2007) %>%
+  filter(START_DATE < 2020) %>%
   ggplot(aes(x = as.factor(START_DATE), fill = as.factor(START_DATE))) +
   geom_bar(show.legend = FALSE) +
   xlab("Year") +
+  ylab("Number of Abstracts") +
   ggtitle("Abstract Count by Project Start Year") +
   #labs(main = "Abstract Count by Project Start Year", x = "Year") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 30))
+  theme(axis.text.x = element_text(angle = 35)) -> date_gr
 
 data_for_liz$ab_char <- nchar(data_for_liz$ABSTRACT)
 mean(data_for_liz$ab_char)
@@ -36,5 +38,11 @@ data_for_liz %>%
   filter(ab_char < 10001) %>%
   ggplot(aes(x = ab_char)) +
   geom_histogram(binwidth = 100, fill = "#0072B2") +
+  xlab("Number of Characters") +
+  ylab("Number of Abstracts") +
   ggtitle("Number of Characters per Abstracts") +
-  theme_bw()
+  theme_bw() -> char_hist
+
+grid.arrange(dept_gr, date_gr, char_hist, nrow = 2)
+
+
