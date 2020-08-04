@@ -60,6 +60,12 @@ shinyApp(
         ),
 
         menuItem(
+          tabName = "topicmodeling",
+          text = "Topic Modeling",
+          icon = icon("network-wired")
+        ),
+
+        menuItem(
           tabName = "both",
           text = "Hot & Cold Topics",
           icon = icon("fire")
@@ -136,14 +142,24 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     width = NULL,
+                    enable_sidebar = FALSE,
+                    h3("Welcome to our Dateset!"),
+                    p("Use this page to explore the dataset. You can search for any word to see its representation within our corpus over time and see word frequencies based upon the different funding agencies included in Federal RePORTER. Please be patient, graphs may take a few seconds to load.")
+                  ),
+                  boxPlus(
+                    title = "Explore Words in the Corpus",
+                    closable = FALSE,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    width = NULL,
                     enable_sidebar = TRUE,
-                    sidebar_width = 15,
+                    sidebar_width = 20,
                     sidebar_start_open = TRUE,
                     sidebar_content = searchInput("search_term", label = "Enter search term", value = "keyword"),
                     sidebar_title = "Search Term",
-                    #column(12, p(strong("Word Frequency Over Time: Search Any Term!")), align = 'center'),
-                    column(10, plotOutput("word_time")),
-                    column(10, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
+                    column(9, plotOutput("word_time")),
+                    column(9, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
                   ),
 
                   boxPlus(
@@ -161,7 +177,7 @@ shinyApp(
                                                                          "NASA", "NSF", "USDA", "VA"),
                                                           selected = "HHS")),
                     column(10, plotOutput("important_words")),
-                    footer = p("Word frequencies weighted by the funding department of the abstract. The weight is calculated by multiplying the term frequency by the inverse document frequency. More info can be found", a(href = "https://www.tidytextmining.com/tfidf.html", "here."))
+                    footer = p("Word frequencies weighted by the funding department of the abstract. The weight is calculated through tf-idf by multiplying the term frequency by the inverse document frequency. More info can be found", a(href = "https://www.tidytextmining.com/tfidf.html", "here."))
                   ),
 
                   boxPlus(
@@ -181,12 +197,12 @@ shinyApp(
                                               hr(),
                                               sliderInput("freq",
                                                           "Minimum Frequency:",
-                                                          min = 1000,  max = 500000, value = 50000),
+                                                          min = 100,  max = 10000, value = 5000),
                                               sliderInput("max",
                                                           "Maximum Number of Words:",
-                                                          min = 1,  max = 100,  value = 50)),
-                    column(10, plotOutput("wordcloud")),
-                    footer = "Word clouds by funding agency."
+                                                          min = 1,  max = 50,  value = 25)),
+                    column(9, plotOutput("wordcloud")),
+                    footer = "Word clouds by funding agency. The larger word appears more frequently in the dataset for a given department."
                   )
                 )),
 
@@ -200,8 +216,7 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("Some text describing hot and cold emerging topics, where this idea came from, potentially citing that other paper")),
-                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. To change graph settings, hover over the top right of the graph."))),
+                    column(12, p("Some text describing hot and cold emerging topics, where this idea came from, potentially citing that other paper"))),
                   boxPlus(
                     title = "Emerging Topics",
                     closable = FALSE,
@@ -210,24 +225,25 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Emerging Topics: These topics have seen an increase over time within our dataset."), align = 'center'),
+                    column(12, h2("Emergining Topics"), align = 'center'),
+                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("emerging")),
                     column(12, DT::dataTableOutput("emerging_topics"))
                   ),
 
                   boxPlus(
-                    title = "Receding Topics",
+                    title = "Hottest & Coldest Topics",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Receding Topics: These topics are seecn a decrease over time within our dataset."), align = 'center'),
-                    p("plot output like above"),
-                    p("data table output like above")
-                    #plotlyOutput("emerging"),
-                    #dataTableOutput("emerging_topics")
+                    column(12, h2("Hot & Cold Topics")),
+                    column(12, p("Information about these figures."), align = 'center'),
+                    p("outputs")
+                    #column(12, plotlyOutput("emerging")),
+                    #column(12, DT::dataTableOutput("emerging_topics"))
                   )
                 )),
 
@@ -335,6 +351,19 @@ shinyApp(
                       )
                   )),
 
+        tabItem(tabName = "topicmodeling",
+                fluidRow(
+                  boxPlus(
+                    title = "Topic Modeling",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    enable_sidebar = FALSE,
+                    column(12, p("Kathryn to develop content"))
+                    ))),
+
         tabItem(tabName = "model",
                 fluidRow(
                   boxPlus(
@@ -356,6 +385,7 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Pandemics."), align = 'center'),
+                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("pandemics")),
                     column(12, DT::dataTableOutput("pandemics_topics"))
                   ),
@@ -368,6 +398,7 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus."), align = 'center'),
+                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     plotlyOutput("coronavirus"),
                     DT::dataTableOutput("coronavirus_topics")
                   )
@@ -588,9 +619,10 @@ shinyApp(
 
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
-        geom_point(aes(colour = factor(year))) +
-        labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color ='Year') +
-        geom_smooth(aes(x = year, y = n), se = FALSE, color = 'light blue', size = 2) +
+        geom_point(aes(colour = as.factor(year))) +
+        labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color = 'Year', x = "Year", y = "Word Frequency") +
+        geom_smooth(aes(group = 1), se = FALSE, color = 'light blue', size = 2) +
+        scale_x_continuous(breaks = seq(2009, 2019, by = 1)) +
         theme_bw()
     })
 
@@ -662,7 +694,7 @@ shinyApp(
     })
 
     output$pandemics <- renderPlotly({
-      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Proportion, type = "scatter", mode = "lines+markers", color = pandemic$Topic)
+      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic, name = pandemic$Topic_Legend)
     })
 
     output$pandemics_topics <- DT::renderDataTable({

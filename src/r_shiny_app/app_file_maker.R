@@ -58,7 +58,7 @@ saveRDS(tidy_year, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_year.
 
 #All topics
 topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/space_FINAL_UPDATED_seventy_fivetopics (1).csv")
-topics <- all_topics %>%
+topics <- topics %>%
   filter(START_YEAR > 2009)
 
 saveRDS(topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf.rds")
@@ -84,7 +84,7 @@ saveRDS(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_
 
 #Pandemics topics
 
-pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/space_FINAL_UPDATEDthirtypandemictopics (1).csv")
+pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/8.4.Thirty_Pandemic_Topics (2).csv")
 pandemic <- pandemic %>%
   filter(START_YEAR > 2009)
 
