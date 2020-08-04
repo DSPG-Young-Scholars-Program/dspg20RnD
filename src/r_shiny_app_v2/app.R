@@ -143,7 +143,7 @@ shinyApp(
                     collapsible = TRUE,
                     width = NULL,
                     enable_sidebar = FALSE,
-                    h3("Welcome to our Dateset!"),
+                    h3("Welcome to our Dataset!"),
                     p("Use this page to explore the dataset. You can search for any word to see its representation within our corpus over time and see word frequencies based upon the different funding agencies included in Federal RePORTER. Please be patient, graphs may take a few seconds to load.")
                   ),
                   boxPlus(
@@ -158,8 +158,8 @@ shinyApp(
                     sidebar_start_open = TRUE,
                     sidebar_content = searchInput("search_term", label = "Enter search term", value = "keyword"),
                     sidebar_title = "Search Term",
-                    column(9, plotOutput("word_time")),
-                    column(9, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
+                    column(10, plotOutput("word_time")),
+                    column(10, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
                   ),
 
                   boxPlus(
@@ -619,7 +619,7 @@ shinyApp(
 
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
-        geom_point(aes(colour = as.factor(year))) +
+        geom_point() +
         labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color = 'Year', x = "Year", y = "Word Frequency") +
         geom_smooth(aes(group = 1), se = FALSE, color = 'light blue', size = 2) +
         scale_x_continuous(breaks = seq(2009, 2019, by = 1)) +
@@ -702,7 +702,7 @@ shinyApp(
     })
 
     output$coronavirus <- renderPlotly({
-      plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic#, name = corona$Topic_Legend
+      plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic, name = corona$Topic_Legend
               )
     })
 
