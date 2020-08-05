@@ -70,7 +70,7 @@ all_topics <- topics %>%
 saveRDS(all_topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/all_topics.rds")
 
 #Coronavirus topics
-corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu6_Thirty_Corona_Topics.csv")
+corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu_Thirty_Corona_edit.csv")
 corona <- corona %>%
   filter(START_YEAR > 2009)
 

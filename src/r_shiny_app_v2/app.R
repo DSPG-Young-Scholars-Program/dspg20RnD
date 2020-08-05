@@ -439,8 +439,8 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus."), align = 'center'),
                     column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
-                    plotlyOutput("coronavirus"),
-                    DT::dataTableOutput("coronavirus_topics")
+                    column(12, plotlyOutput("coronavirus")),
+                    column(12, DT::dataTableOutput("coronavirus_topics"))
                   )
                 )),
 
