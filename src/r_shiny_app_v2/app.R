@@ -143,9 +143,9 @@ shinyApp(
                     collapsible = TRUE,
                     width = NULL,
                     enable_sidebar = FALSE,
-                    p("Use this page to explore the words in the abstracts of our R&D projects dataset. 
-                      You can search for any word to see its representation within our corpus over time and see 
-                      word importance and frequencies based upon the different funding agencies included in 
+                    p("Use this page to explore the words in the abstracts of our R&D projects dataset.
+                      You can search for any word to see its representation within our corpus over time and see
+                      word importance and frequencies based upon the different funding agencies included in
                       Federal RePORTER. Please be patient, graphs may take a few seconds to load.")
                   ),
                   boxPlus(
@@ -253,105 +253,107 @@ shinyApp(
         tabItem(tabName = "data",
                 fluidRow(
                   boxPlus(
-                    title = "Data & Methodology",
+                    title = "Data Source",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    h2("Data Source"),
                     h3("Federal RePORTER"),
-                    p("We downloaded the data from ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), " a website that allows users to access \"a repository of data and tools that will be useful to assess the impact of federal R&D investments...\" by enabling \"documentation and analysis of inputs, outputs, and outcomes resulting from federal investments in science.\ A previous DSPG project (2019) used data from 2008-2018, however we updated the data include 2019. The data consists of abstracts from each grant as well as grant metadata from 1+ million R&D grants from 2008-2019. Some columns (metadata) interest include Fiscal Year, Project Title, Agency, and Principal Investigator."),
-                    h2("Methodology"),
+                    p("Our dataset consists of abstracts and project information for more than 1 million R&D grants entered into the ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER"), "system from 2008 - 2019. The Federal RePORTER database describes it as,  \"a collaborative effort led by STAR METRICS® to create a searchable database of scientific awards from [federal] agencies. This database promotes transparancy and engages the public, the research community, and agencies to describe federal science research investments and provide empirical data for science policy.\" Project information includes project title, department, agency, principle investigator, organization, and project start data. We downloaded our data using the Federal ExPORTER page.")),
+
+                  boxPlus(
+                    title = "Data Preparation",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
                     h3("Data Preparation"),
-                    p("We went through several steps in order to optimize the abstract text for topic modeling:"),
-                    tags$ul(
-                      tags$li("Because abstracts are the main source of information that is project analyzed, any rows with NA or \"No Abstract Provided\" in the \"ABSTRACT\" field were removed."),
-                    tags$li("Date columns that had NA values were filled where possible with information from other date columns."),
-                    tags$li("We removed duplicate rows based on whether rows had matching ABSTRACT, PROJECT_TITLE and PROJECT_START_DATE. For the rows that were identified as duplicate, the latest PROJECT_END_DATE was preserved, and the number of unique ORGANIZATIONs and Principal Investigators were recorded."),
-                    tags$li("Lowercase all abstracts"),
-                    tags$li("Removed -"),
-                      tags$ul(
-                     tags$li("white space & punctuation"),
-                      tags$li("\"junk\" phrases throughout (ex. \"DESCRIPTION: Provided by applicant\", \"Background\", \"Intellectual merit\")"),
-                      tags$li("Abstracts less than 150 characters"),
-                      tags$li("Other data fields found within abstract")),
-                      tags$li("Removed	stop words"),
-                      tags$li("Went through the process of	lemmatization"),
-                      tags$li("Used the 'bag-o-words' method to prepare text for models.")),
+                    p(strong("Defining 'Emerging' Topics:")),
+                    p("Our project maps the increase and decrease in new federally funded research projects associated with topics across time. We define a topic as having 'emerged' the first time a project or projects associated with the topic and identified in the corpus. We prepared our data for analysis in keeping with this goal."),
+                    p("We needed to:"),
+                    tags$ol(
+                      tags$li("fill in missing information for project start date"),
+                      tags$li("decide on a deduplication strategy for dealing with duplicate abstracts in the corpus, and"),
+                      tags$li("clean and prepare the abstracts for use in topic modeling.")),
+                    p(strong("Fill in Missing Project Start Dates:")),
+                    p("In order to track emerging topics, we need every project in our dataset to have a start date. Our initial dataset had 1,156,137 projects and 13.4% were missing start dates. For projects missing start dates, we utilized the budget start date if available (57.1% of the budget start dates in the full dataset were missing). For projects missing a start date and budget start date, we utilized the fiscal year in which it was added to the Federal RePORTER database as the start date."),
+                    p(strong("Deduplication Strategy:")),
+                    p("Because our focus was on identifying topics associated with new research projects, we needed to control for multi-institutional projects (e.g., a single project associated with investigators across two or more universities) and extensions of previously established projects (e.g., projects that have their funding extended are recorded in Federal RePORTER with a new start date every time their funding is extended). Counting the same project more than once in a given year or more than once across the timespan of analysis could artificially inflate the number of new projects associated with a topic in a given year. "),
+                    p("To do this, we identified and removed duplicate projects. We defined duplicate protects as ones with the same title, abstract, and start date. All but one instance of each set of duplicate projects was removed. The remaining instance of each project was appended to include the latest project end date and the number of unique organizations and principle investigators associated with the project."),
+                    p(strong("Abstract Cleaning and Processing:")),
+                    p("We removed projects with empty/null abstracts (e.g., abstracts listed as “NA”, “No Abstract Provided”) and projects with abstracts that contained less than 150 characters. These projects lacked sufficient information for the model to associate them with a topic. We cleaned the abstract text by removing elements that were not part of the abstract or not relevant to the specifics of the project (e.g. phrases such as 'non-technical abstract', 'description (provided by applicant) and 'end of abstract). We also removed principal investigator names, project organizations and project titles (if included in abstracts) in order to prevent topics forming around people or universities."),
+                    p("After cleaning the abstract text, we used standard natural language processing steps to prepare our abstracts for use with topic models."),
+                    tags$ol(
+                      tags$li(strong("Tokenization and Lemmatization:"), "Abstracts are transformed into a list of their words (each word is a 'token') and each word is lemmatized (i.e., variations of same word and part-of-speech are reduced to their shared dictionary form of lemma). For example, jumped (verb) and jumps (verb) would both be reduced to jump (verb) but jumpy (adjective) would not."),
+                      tags$li(strong("Stop Word Removal"), "Tokens belonging to a standard stop word list are removed. Stop words are common words that provide little information on content and do not contribute to topic meaning, They include words such as: 'as, by, if, most, several, whereas.; We also added custom stop words not included in the standard list (e.g. furthermore, overall, specifically)."),
+                      tags$li(strong("N-grams Creation:"), "We utilized bi-grams and tri-grams in pur abstract text. A bi-gram is two words that appear often enough one after the other that they get combined into one token. For example, 'anti_virus' is a bigram. A tri-gram is similar except it contains three words that appear sequentially.")),
+                    p("We then removed non-alphanumeric characters in tokens, single character tokens, and numeric tokens that were not years. Listed in the table are the Python packages that we used for each step"),
+                    tableOutput("packages"),
+                    p("As a final step, inspired by the work in [1], we removed many of the most frequent (remaining) words in the corpus. For example, we removed words such as: research, study, project, use, result, understanding, and investigate. These words appear frequently in our corpus, but they do not contribute to topic meaning because they appear in such a high proportion of abstracts that they are not useful for differentiating across topics."),
+                    p("Our final dataset includes 690,814 projects. See the graphs below for information about the number of abstracts in the corpus by project start year, the percent of abstracts by department, and the length of abstracts (in number of characters)."),
                     img(src = "combined_graphs.jpeg", align = "center"),
-                    br(),
-                    h3("Data Modeling"),
-                    p("Topic modeling is the process of generating a series of underlying themes from a set (corpus) of documents. Initially, one can view a corpus as a series of documents, each composed of a string of words. These words do not each exist independently one another—they form coherent sentences and express broader ideas. However, if one wants to analyze these implicit ideas conveyed within a corpus, it is often not feasible to manually read and record what the focus of each document is. Topic modeling processes seek to resolve this common issue."),
-                    p("Rather than view each document strictly as a collection of words, one can use topic modeling to insert an additional level of analysis: each document is composed of a distribution of topics, and each topic is a collection of thematically interrelated words. This distinction allows for more focused data analysis, since analyzing a corpus at the topic level can refine a sprawling jumble of thousands of documents into an interpretable, manageable dataset. We examined two topic modeling frameworks over the course of this project:"),
-                    h4("Latent Dirichlet Allocation (LDA)"),
-                    p("Probabilistic topic modeling process"),
-                    tags$ul(
-                            tags$li("Each document is a distribution of topics"),
-                            tags$li("Each topic is a distribution of words")),
-                    p("Generated latent topics"),
-                    tags$ul(
-                            tags$li("Draws out set of implicit themes across set of documents using Dirichlet probability distribution"),
-                            tags$li("Provides additional layer of information for compartmentalization & analysis")),
-                    p("LDA starts with a corpus of documents and attempts to output: (1) The topics that span within the corpus and (2) How these topics are distributed across each document. Each has an associated parameter, which helps determine the volume and specificity of topics that show up in the output."),
-                    p(strong("Input:")),
-                    p("Corpus"),
-                    tags$ul(
-                            tags$li("Conceptual: Set of documents "),
-                            tags$li("Technical: Corpus starts as single object comprised of D (documents x words), but is processed into two matrices following Dirichlet distribution "),
-                            tags$li("Takeaway: Because LDA is not built to discern context of words, data cleaning is essential step ")),
-                    p(strong("Output:")),
-                    p("Theta (θ)"),
-                    tags$ul(
-                            tags$li("Conceptual: \"Per-Document Topic Proportions\" "),
-                            tags$li("Technical: Random matrix where θ(i,j) represents the probability of the i th document to containing the j th topic "),
-                            tags$li("Takeaway: Approximates the potential association each document has with a set of topics; \"what topics does each document span?\" ")),
-                    p("Beta (β)  "),
-                    tags$ul(
-                            tags$li("Conceptual: \"Set of Topics\"  "),
-                            tags$li("Technical: A random matrix where β(i,j) represents the probability of i th topic containing the j th word "),
-                            tags$li("Takeaway: Provides clusters of words that seem to connect thematically; \"what broader subject is spanned by these words?\" ")),
-                      p(strong("Parameters: ")),
-                      p("Alpha (α) "),
-                      tags$ul(
-                        tags$li("Conceptual: document-topic density: higher alpha -> documents are made up of more topics "),
-                        tags$li("Technical: Distribution related parameter that governs what the distribution of topics is for all the documents in the corpus looks like. Impacts θ (the document x topic matrix) "),
-                        tags$li("Takeaway: Determines \"sensitivity\" to presence of potential topics in a document ")),
-                    p("Eta (η)  "),
-                    tags$ul(
-                      tags$li("Conceptual: topic-word density. higher beta -> topics are made up of more of the words in the corpus."),
-                      tags$li("Technical: — Distribution related parameter that governs what the distribution of words in each topic looks like. Impacts β (the topic x word matrix) "),
-                      tags$li("Takeaway: Determines \"specificity\" of words required to characterize each topic ")),
-                    p(strong("Process: ")),
-                    p("Uses Dirichlet distribution "),
-                    tags$ul(
-                      tags$li("Multivariate Beta distribution—multiple parameters used to model probabilities "),
-                      tags$li("Topic modeling: uses probabilities to approximate clusters of potentially related words into topics and associate these topics with the array of documents ")),
-                      br(),
-                      h4("Nonnegative Matrix Factorization (NMF)"),
-                      p("NMF decomposes (factorizes) high-dimensional vectors into a lower-dimensional representation "),
-                    tags$ul(
-                      tags$li("Typically uses linear algebra technique called term frequency–inverse document frequency (tf-idf) "),
-                      tags$li("No Dirichlet overlaid onto data, meaning that word frequency is weighed more heavily in determining of topics, rather than emphasis on Dirichlet's probabilistic method ")),
-                      p(strong("Unsupervised technique")),
+                    footer = p("[1] Alexandra Schofield, Mans Magnusson, Laure Thompson, and David Mimno. Understanding Text Pre-Processing for Latent Dirichlet Allocation. 2017.", a(href = "https://www.cs.cornell.edu/~xanda/winlp2017.pdf.", "https://www.cs.cornell.edu/~xanda/winlp2017.pdf."))
+                  ),
 
-                      tags$ul(tags$li("Iterative process, no labeling of topics that the model will be trained on. ")),
+                  boxPlus(
+                    title = "Topic Modeling",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    h3("Topic Modeling"),
+                    p("When presented with a collection of text documents, or a corpus, one of the first steps one might take is to understand and classify each document into different topics or themes. For small corpora, it may be feasible to manually read and record the topics of each document; however, this is clearly impractical for large corpora of interest in recent years such as Twitter posts or articles from a scientific journal. Topic modeling helps resolve this issue by automatically processing a corpus and discovering topics that characterize the documents.  "),
+                    p("An additional benefit is that document can be assigned to miltiple topics rather than just one, a reasonable assumption given that many documents consist of a combination of themes.  We examined two topic modeling algorithms over the course of this project: Latent Dirichlet allocation (LDA) and non-negative matrix factorization (NMF).  We used the Python package Scikit-Learn for the implementations of both LDA and NMF. "),
+                    p(strong("Topic Model Input and Output")),
+                    p("LDA and NMF both take a term-document matrix of our cleaned and processed abstract text as input.  A term-document matrix is a mathematical representation of text data as numerical data that can then be analyzed using a statistical model or machine learning algorithm.  More specifically, a term-document matrix tracks is comprised of the frequency count of each word in each document.   "),
+                    p("LDA and NMF also output the same two matricies, consisting of the results of the topic model."),
+                    tags$ol(
+                      tags$li(strong("Document-Term Matrix:"), "this matrix contains information on which topics appear in which documents and how much they appear. LDA represents this information as probabilities of each topic in each document whereas NMF gives weights for each topic in each document."),
+                      tags$li(strong("Topic-Term Matrix:"), "this matrix contains information on which words appear in which topics. Again, LDA represents this information using the probability of each word appearing in each topic and NMF gives weights for each word appearing in each topic.  When analyzing topics, we generally only look at the 5 or 10 words in each topic with the highest probability/weight.  ")),
+                    p(strong("Latent Dirichlet Allocation - LDA")),
+                    p("LDA is a statistical algorithm that generates topics probabilistically, sorting words based on their likelihood of appearing in the same document as one another and reporting these common word-association patterns as the corpus’s most probable topics.  In addition, LDA is a soft-clustering algorithm meaning that the same word can appear in multiple topics. "),
+                    p("The main assumption underlying LDA is that the corpus is built using a generative structure that we are trying to recover.  More specifically, the assumption is that each document in the corpus is built word by word using the following steps: 1) pick a topic according to the probability distribution of topics in the corpus, 2) for the selected topic, pick a word according to the probability distribution of words for that topic, and 3) repeat steps 1-2 over and over to create a document.  LDA works to uncover this unobserved structure and thus outputs the document-topic distribution and topic-term distribution as results. "),
+                    p("The seminal paper on LDA was written by David M. Blei, Andrew Y. Ng, and Michael I. Jordan [1]. "),
+                    p(strong("Non-Negative Matrix Factorization")),
+                    p("NMF is a linear algebra based method that is also a soft-clustering algorithm.  NMF is an approximate matrix decomposition that finds the document-topic matrix and topic-term matrix through iterative optimization.  The idea is that the document-term matrix can be approximated as the product of the document-topic matrix and the topic-term matrix, in effect clustering words together into topics, and weighting those topics amongst every document. This approximation yields the best attempt to recreate the original corpus with a topic structure.  The seminal paper on NMF was written by Daniel D. Lee and H. Sebastian Seung [2]. "),
+                    img(src = "nmf_image.png", width = "400px", height = "100px"),
+                    p("In our work, we use a weighted document-term matrix as input to NMF in order to achieve better topic modeling results.  Instead of only using the frequency of each word in each document, we use a term frequency-inverse document frequency (TFIDF) weighting scheme for each word in each document.  TFIDF has the effect of 'penalizing' words that appear in many documents in the corpus, which aids in topic modeling as these words are most likely not very specific to the topics themselves."),
+                    p(strong("Evaluation of Topic Models")),
+                    p("To evaluate the quality of our topic models, we need a measure or score of how well the model performed. We also want to ensure that the topics the model finds are coherent and human interpretable.  We generally only look at the top 5-10 words in each topic to interpret what topic is being represented."),
+                    p("Given these goals, we use the measure of C", tags$sub("V"), "topic coherence as given in [3] to evaluate our topic models.  As shown in [3], C", tags$sub("V"), "topic coherence is the coherence measure most correlated to human interpretation of topics.  We find the C", tags$sub("V"), "coherence per topic, which is a score that encodes how often the topic words appear together in close proximity within the documents as well aas semantic information. To find the C", tags$sub("V"), "topic coherence for the entire model, take take the average of all of the topic C", tags$sub("V"), "coherence scores. The optimal topic model for our corpus is then selected by comparing the C", tags$sub("V"), "topic coherence scores from each model and selecting the one with the highest score."),
+                    footer = p("[1] David M. Blei, Andrew Y. Ng, and Michael I. Jordan. 2003. Latent dirichlet allocation. Journal of Machine Learning Research 3, 993–1022.", a(href = "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf", "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf."),
+                               br(),
+                               "[2] Daniel D. Lee and H. Sebastian Seung. 1999. Learning the parts of objects by non-negative matrix factorization. Nature 401, 788-791. ",
+                               br(),
+                               "[3] Michael Röder, Andreas Both, and Alexander Hinneburg. 2015. Exploring the Space of Topic Coherence Measures. In Proceedings of the Eighth ACM International Conference on Web Search and Data Mining (WSDM ’15). Association for Computing Machinery, New York, NY, USA, 399–408. DOI:", a(href = "https://doi.org/10.1145/2684822.2685324", "https://doi.org/10.1145/2684822.2685324"))
+                  ),
 
-                      p(strong("Process: ")),
-                      tags$ul(
-                        tags$li("NMF modifies the dimensions of these two matrices such that the matrix product approaches matrix A until either the approximation error converges or maximum iterations are reached. "),
-                        tags$li("Starting matrix is reduced using tf-idf; finds matrices W, H’, such that norm(A-WH’) is minimized. "),
-                        tags$ul(
-                          tags$li("A: document-term matrix "),
-                          tags$li("W: Documents x Topics "),
-                          tags$li("H: Topics x Terms ")),
-                        tags$li("This process normalizes the matrix to ensure terms are properly weighted in terms of frequency "),
-                        tags$li("Normalized matrix is then sent through iterative process "),
-                        tags$ul(
-                          tags$li("the values in factors W and H are given random initial values. The key required input parameter is the number of topics (components) k. "),
-                          tags$li("Sorts contents of matrices into various clusters of terms (the most clearly delineated topics according to the model) "),
-                          tags$li( "Output is list of weighted terms (representing topics) and which of these topics are most prevalent in each document ")))
-                      )
+                  boxPlus(
+                    title = "Emerging Topics",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    h3("Emerging Topics"),
+                    p("Given our optimal topic mode, an NMF model with 75 topics, we analyze its results to discover and characterize 'hot' and 'cold' topics. To do so, we follow the approach of [1] with the exception that we use our optimal NMF topic model, not an LDA model. o categorize a topic as “hot” or “cold”, we first use the document-topic matrix to find the average weight of each topic in each year between 2010-2019. This creates a set of points for each topic, where each point has the form (year, weightyear).  We then model the relationship between the weights and years for each topic using linear regression. Topics that have regression lines with positive slopes are considered 'hot' and those that have regression lines with negative slopes are considered 'cold'."),
+                    p("The slope of the regression line slope serves to capture the trend of the topic overtime.  For example, a “hot” topic means that over time research abstracts within Federal RePORTER’s database have a higher weight for that topic, ie. the topic is more present in the corpus.  The magnitude of the regression line slope allows us to compare which topics are “hotter” or “colder”.  "),
+                    p("We used the work of [2] as a reference for this emerging topics technique as well, but instead of using a time period of a few years per data point of the regression line, we chose the strategy of [1] and use a year per data point.  "),
+                    p(strong("Pandemics Case Study")),
+                    p("We conduct a pandemics case study where we explore emerging topics around the research areas of pandemics and coronavirus.  To do this we first use information retrieval techniques to create two smaller corpora: one that focuses on pandemics, and one that focuses on coronavirus.  We then use an NMF topic model of 30 topics on each smaller corpus and conduct the emerging topics analysis as above.  The size of each corpus is given in the table below. "),
+                    tableOutput("case_study"),
+                    p("To construct the smaller corpora we use a combination of three different information retrieval techniques.  The steps below outline the process for the pandemics corpus.  For the coronavirus corpus we follow the same steps except replace the word “pandemic” with “coronavirus”. "),
+                    tags$ol(
+                      tags$li(strong("Literal Term Matching:"), "we use the term-document matrix of frequency counts per word per document for our full dataset of abstracts to extract the 500 projects that have the most occurrences of the word “pandemic” in their abstracts. "),
+                      tags$li(strong("TFIDF:"), "we use the TFIDF term-document matrix of weighted counts per word per document for our full dataset of abstracts to extract the 500 projects that have the largest weights for the word “pandemic” in their abstracts. "),
+                      tags$li(strong("Latent Semantic Indexing (LSI):"), "we use a truncated singular value decomposition on the TFIDF term-document matrix for our full dataset of abstracts to extract the 500 projects that have abstracts most relevant to the search query for the word “pandemic”.  LSI differs from the previous two information retrieval approaches in the fact that project abstracts returned as relevant to the search query do not necessarily have to contain the word “pandemic”.  But they may contain words that are latently related to the word “pandemic”.  For more information about LSI, the interested reader can see the seminal paper [3].  We use the implementation of the truncated singular value decomposition in the Python package Scikit-Learn. ")),
+                    p("To create the smaller corpus we then take the set of unique projects from the union of the results returned from the three information retrieval methods above.  "),
+                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235. ", br(), " [2] Hakyeon Lee and Pilsung Kang. 2018. Identifying core topics in technology and innovation management studies: a topic model approach. The Journal of Technology Transfer 43, 1291–1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."), br(), "[3] Scott Deerwester, Susan T. Dumais, George W. Furnas, Thomas K. Landauer, and Richard Harshman. 1990. Indexing by latent semantic analysis. Journal of the American Society for Information Science 41 (6), 391-407. ")
+                    )
+
                   )),
 
         tabItem(tabName = "topicmodeling",
@@ -364,10 +366,10 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("After cleaning and processing the R&D abstracts in our corpus, we are ready to use them for topic modeling.  We create the term-document matrix from the cleaned abstracts and in the process filter the terms to include in the matrix.  We only include a term in the matrix if it meets the following criterion:"), 
+                    column(12, p("After cleaning and processing the R&D abstracts in our corpus, we are ready to use them for topic modeling.  We create the term-document matrix from the cleaned abstracts and in the process filter the terms to include in the matrix.  We only include a term in the matrix if it meets the following criterion:"),
                       tags$ol(
-                        tags$li("A term must appear in at least 20 documents in the corpus, and"), 
-                        tags$li("A term cannot appear in more than 60% of the documents of the corpus.") 
+                        tags$li("A term must appear in at least 20 documents in the corpus, and"),
+                        tags$li("A term cannot appear in more than 60% of the documents of the corpus.")
                       ),
 	                    p("This filtering of extremes allows us to remove terms that are not frequent enough to become a top 10 word in a topic, and to remove common words to the corpus that would not contribute to topic meaning.  We use the term-document matrix with LDA and the TFIDF term-document matrix with NMF.  Both matrices are created using the Python package Scikit-Learn."),
                       p("In addition to a matrix, LDA and NMF also both require the number of topics as input.  Unfortunately, we do not know the number of topics present in the corpus in advance.  We find our optimal topic model by varying the number of topics for NMF and LDA while tracking the CV topic coherence for each choice.  The model with the largest coherence is the optimal model."),
@@ -382,7 +384,7 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."), 
+                    column(12, p("Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
                            p("Insert graphs here"),
                            p("We see that NMF is outperforming LDA and that the optimal topic model for our corpus is NMF using 75 topics.  The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA.  In the future, the plots representing average coherence of 10 model runs for each number of topics will be smoother.")
                     )
@@ -437,8 +439,8 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus."), align = 'center'),
                     column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
-                    plotlyOutput("coronavirus"),
-                    DT::dataTableOutput("coronavirus_topics")
+                    column(12, plotlyOutput("coronavirus")),
+                    column(12, DT::dataTableOutput("coronavirus_topics"))
                   )
                 )),
 
@@ -720,6 +722,19 @@ shinyApp(
         with(wordcloud(word, n, scale = c(2,0.75),
                        min.freq = input$freq, max.words = input$max,
                        ordered.colors = TRUE))
+    })
+
+    output$packages <- renderTable({
+      table <- matrix(c("Tokenization and Lemmatization", "stanza", "Stop Word List Creation", "spaCy", "N-Grams Creation", "gensim"), ncol = 2, byrow = TRUE)
+      colnames(table) <- c("Step", "Python Package")
+      table
+
+    })
+
+    output$case_study <- renderTable({
+      case_table <- matrix(c("Pandemics", 1137, "Coronavirus", 1012), ncol = 2, byrow = TRUE)
+      colnames(case_table) <- c("Corpus", "Number of Projects")
+      case_table
     })
 
     output$emerging <- renderPlotly({
