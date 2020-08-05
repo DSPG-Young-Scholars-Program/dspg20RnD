@@ -99,7 +99,7 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    column(12, img(src = "uva-dspg-logo.jpg", width = "200px", height = "200px"), align = "center"),
+                    column(12, img(src = "uva-dspg-logo.jpg", width = "300px", height = "300px"), align = "center"),
                     column(12, h1("UVA Biocomplexity Institute"), align = "center"),
                     column(12, h2("R&D Abstracts: Emerging Topic Identification"), align = "center")
 
@@ -136,15 +136,17 @@ shinyApp(
         tabItem(tabName = "graph",
                 fluidRow(
                   boxPlus(
-                    title = "Explore Words in the Corpus",
+                    title = "Welcome to our Dataset!",
                     closable = FALSE,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     width = NULL,
                     enable_sidebar = FALSE,
-                    h3("Welcome to our Dataset!"),
-                    p("Use this page to explore the dataset. You can search for any word to see its representation within our corpus over time and see word frequencies based upon the different funding agencies included in Federal RePORTER. Please be patient, graphs may take a few seconds to load.")
+                    p("Use this page to explore the words in the abstracts of our R&D projects dataset. 
+                      You can search for any word to see its representation within our corpus over time and see 
+                      word importance and frequencies based upon the different funding agencies included in 
+                      Federal RePORTER. Please be patient, graphs may take a few seconds to load.")
                   ),
                   boxPlus(
                     title = "Explore Words in the Corpus",
@@ -156,14 +158,14 @@ shinyApp(
                     enable_sidebar = TRUE,
                     sidebar_width = 20,
                     sidebar_start_open = TRUE,
-                    sidebar_content = searchInput("search_term", label = "Enter search term", value = "keyword"),
+                    sidebar_content = searchInput("search_term", label = "Type in your search term and then press the Enter key", value = "keyword"),
                     sidebar_title = "Search Term",
-                    column(10, plotOutput("word_time")),
-                    column(10, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
+                    column(9, plotOutput("word_time")),
+                    column(9, p("Note: Extremely frequently used words have been removed as possible search terms. In addition, the axis changes with the frequency of any given word."))
                   ),
 
                   boxPlus(
-                    title = "Word Frequencies",
+                    title = "Important Words by Funding Department",
                     closable = FALSE,
                     status = "warning",
                     solidHeader = TRUE,
@@ -176,19 +178,20 @@ shinyApp(
                                                           choices = list("DOD", "ED", "EPA", "HHS",
                                                                          "NASA", "NSF", "USDA", "VA"),
                                                           selected = "HHS")),
-                    column(10, plotOutput("important_words")),
-                    footer = p("Word frequencies weighted by the funding department of the abstract. The weight is calculated through tf-idf by multiplying the term frequency by the inverse document frequency. More info can be found", a(href = "https://www.tidytextmining.com/tfidf.html", "here."))
+                    column(9, plotOutput("important_words")),
+                    footer = p("The weight of each word is given by the TFIDF for abstracts corresponding to the given department.
+                               The weight can be thought of as a measure of importance of the word to the corpus.")
                   ),
 
                   boxPlus(
-                    title = "Word Clouds",
+                    title = "Word Clouds by Funding Department",
                     closable = FALSE,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     width = 6,
                     enable_sidebar = TRUE,
-                    sidebar_width = 20,
+                    sidebar_width = 22,
                     sidebar_start_open = TRUE,
                     sidebar_content = tagList(selectInput("selection", "Choose a department:",
                                                           choices = list("DOD", "ED", "EPA", "HHS",
@@ -197,12 +200,12 @@ shinyApp(
                                               hr(),
                                               sliderInput("freq",
                                                           "Minimum Frequency:",
-                                                          min = 100,  max = 10000, value = 5000),
+                                                          min = 1000,  max = 10000, value = 5000, step = 1000),
                                               sliderInput("max",
                                                           "Maximum Number of Words:",
-                                                          min = 1,  max = 50,  value = 25)),
-                    column(9, plotOutput("wordcloud")),
-                    footer = "Word clouds by funding agency. The larger word appears more frequently in the dataset for a given department."
+                                                          min = 10,  max = 50,  value = 25, step = 5)),
+                    column(10, plotOutput("wordcloud")),
+                    footer = "The size of each word represents how frequently the word occurs in the abstracts for a given department.  Larger words appear more often."
                   )
                 )),
 
@@ -354,15 +357,50 @@ shinyApp(
         tabItem(tabName = "topicmodeling",
                 fluidRow(
                   boxPlus(
-                    title = "Topic Modeling",
+                    title = "Topic Modeling Approach Details",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("Kathryn to develop content"))
-                    ))),
+                    column(12, p("After cleaning and processing the R&D abstracts in our corpus, we are ready to use them for topic modeling.  We create the term-document matrix from the cleaned abstracts and in the process filter the terms to include in the matrix.  We only include a term in the matrix if it meets the following criterion:"), 
+                      tags$ol(
+                        tags$li("A term must appear in at least 20 documents in the corpus, and"), 
+                        tags$li("A term cannot appear in more than 60% of the documents of the corpus.") 
+                      ),
+	                    p("This filtering of extremes allows us to remove terms that are not frequent enough to become a top 10 word in a topic, and to remove common words to the corpus that would not contribute to topic meaning.  We use the term-document matrix with LDA and the TFIDF term-document matrix with NMF.  Both matrices are created using the Python package Scikit-Learn."),
+                      p("In addition to a matrix, LDA and NMF also both require the number of topics as input.  Unfortunately, we do not know the number of topics present in the corpus in advance.  We find our optimal topic model by varying the number of topics for NMF and LDA while tracking the CV topic coherence for each choice.  The model with the largest coherence is the optimal model."),
+                      p("For the interested reader, LDA also takes two other parameters: α and β.  α controls the document-topic density and β controls the topic-word density.  A higher value of alpha means that documents are assumed to be made up of more topics whereas a higher value of beta means that topics are assumed to be made up of more of the words in the corpus.  In all of our LDA model runs, we use α = 1/N, where N is the number of topics, and β = 0.1.  These parameter choices allow our documents to be made up of multiple topics [last phrase needs more detail] and the topics to be specific.")
+                      )
+                    ),
+                  boxPlus(
+                    title = "Choosing the Optimal Topic Model",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    enable_sidebar = FALSE,
+                    column(12, p("Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."), 
+                           p("Insert graphs here"),
+                           p("We see that NMF is outperforming LDA and that the optimal topic model for our corpus is NMF using 75 topics.  The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA.  In the future, the plots representing average coherence of 10 model runs for each number of topics will be smoother.")
+                    )
+                  ),
+                  boxPlus(
+                    title = "Optimal Topic Model Results",
+                    closable = FALSE,
+                    width = NULL,
+                    status = "warning",
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    enable_sidebar = FALSE,
+                    column(12, p("We give results for the optimal topic model below and proceed to use it for our emerging topics work as well."),
+                           p("Insert plots/tables here"),
+                           p("Insert comments on results here.")
+                    )
+                  )
+                )),
 
         tabItem(tabName = "model",
                 fluidRow(
@@ -523,7 +561,7 @@ shinyApp(
                                        tags$h6( tags$i())
                                      ),
                                      div(
-                                       "Kathryn is a research scientist."
+                                       "Research Scientist"
                                      )
                                  )
                              )
@@ -542,7 +580,7 @@ shinyApp(
                                        tags$h6( tags$i())
                                      ),
                                      div(
-                                       "Stephanie is the Deputy Division Director & Research Professor."
+                                       "Deputy Division Director & Research Professor"
                                      )
                                  )
                              )
@@ -560,7 +598,7 @@ shinyApp(
                                        tags$h6( tags$i())
                                      ),
                                      div(
-                                       "Joel is a senior scientist."
+                                       "Senior Scientist"
                                      )
                                  )
                              )
@@ -578,7 +616,7 @@ shinyApp(
                                        tags$h6( tags$i())
                                      ),
                                      div(
-                                       "Eric is a research assistant professor."
+                                       "Research Assistant Professor"
                                      )
                                  )
                              )
@@ -598,7 +636,7 @@ shinyApp(
                                      tags$h6( tags$i())
                                    ),
                                    div(
-                                     "John is the Director of R&D Statistics Program at The National Center for Science and Engineering Statistics."
+                                     "Director of R&D Statistics Program at NCSES"
                                    )
                                )
                            )
@@ -619,7 +657,7 @@ shinyApp(
 
     output$word_time <- renderPlot({
       ggplot(filtered_data(), aes(x = year, y = n)) +
-        geom_point() +
+        geom_point(size=3) +
         labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color = 'Year', x = "Year", y = "Word Frequency") +
         geom_smooth(aes(group = 1), se = FALSE, color = 'light blue', size = 2) +
         scale_x_continuous(breaks = seq(2009, 2019, by = 1)) +
