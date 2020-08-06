@@ -15,11 +15,11 @@ source("theme.R")
 
 tidy_abstracts <- readRDS("data/tidy_abstracts_dept.rds")
 tidy_year <- readRDS("data/tidy_year.rds")
-pandemic_topic <- readRDS("data/pandemic_topic.rds")
+#pandemic_topic <- readRDS("data/pandemic_topic.rds")
 pandemic <- readRDS("data/thirtypandemictopics.rds")
-corona_topic <- readRDS("data/corona_topic.rds")
+#corona_topic <- readRDS("data/corona_topic.rds")
 corona <- readRDS("data/thirtycoronatopics.rds")
-all_topics <- readRDS("data/all_topics.rds")
+#all_topics <- readRDS("data/all_topics.rds")
 topics <- readRDS("data/seventyfivetopicsdf.rds")
 
 opt_topics <- readRDS("data/opt_res.rds")
@@ -440,7 +440,9 @@ shinyApp(
                     column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in pandemics are infant respiratory and zika.")),
                     column(12, plotlyOutput("pandemics")),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
-                    column(12, DT::dataTableOutput("pandemics_topics"))
+                    column(12, DT::dataTableOutput("pandemics_topics")),
+                    column(12, img(src = "pan_hot.png", width = "80%"), align = "center"),
+                    column(12, img(src = "pan_cold.png", width = "80%"), align = "center")
                   ),
                   boxPlus(
                     title = "Case Study 2: Coronavirus",
@@ -455,7 +457,9 @@ shinyApp(
                     #column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("coronavirus")),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
-                    column(12, DT::dataTableOutput("coronavirus_topics"))
+                    column(12, DT::dataTableOutput("coronavirus_topics")),
+                    column(12, img(src = "cor_hot.png", width = "90%"), align = "center"),
+                    column(12, img(src = "cor_cold.png", width = "90%"), align = "center")
                   )
                 )),
 
