@@ -22,6 +22,11 @@ corona <- readRDS("data/thirtycoronatopics.rds")
 all_topics <- readRDS("data/all_topics.rds")
 topics <- readRDS("data/seventyfivetopicsdf.rds")
 
+opt_topics <- readRDS("data/opt_res.rds")
+reg_topics <- readRDS("data/reg_topics.rds")
+pan_topics <- readRDS("data/pan_topics.rds")
+cor_topics <- readRDS("data/cor_topics.rds")
+
   # UI ---------------------------------------------------------
 
 shinyApp(
@@ -73,7 +78,7 @@ shinyApp(
 
         menuItem(
           tabName = "model",
-          text = "Pandemics Topic Modeling",
+          text = "Pandemics Case Studies",
           icon = icon("filter")
         ),
 
@@ -228,7 +233,7 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Emergining Topics"), align = 'center'),
+                    column(12, h2("Emerging Topics"), align = 'center'),
                     column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("emerging")),
                     column(12, DT::dataTableOutput("emerging_topics"))
@@ -319,7 +324,7 @@ shinyApp(
                     p("The seminal paper on LDA was written by David M. Blei, Andrew Y. Ng, and Michael I. Jordan [1]. "),
                     p(strong("Non-Negative Matrix Factorization")),
                     p("NMF is a linear algebra based method that is also a soft-clustering algorithm.  NMF is an approximate matrix decomposition that finds the document-topic matrix and topic-term matrix through iterative optimization.  The idea is that the document-term matrix can be approximated as the product of the document-topic matrix and the topic-term matrix, in effect clustering words together into topics, and weighting those topics amongst every document. This approximation yields the best attempt to recreate the original corpus with a topic structure.  The seminal paper on NMF was written by Daniel D. Lee and H. Sebastian Seung [2]. "),
-                    img(src = "nmf_image.png", width = "400px", height = "100px"),
+                    column(12, img(src = "nmf_image.png", width = "80%"), align="center"), #, height = "100px"),
                     p("In our work, we use a weighted document-term matrix as input to NMF in order to achieve better topic modeling results.  Instead of only using the frequency of each word in each document, we use a term frequency-inverse document frequency (TFIDF) weighting scheme for each word in each document.  TFIDF has the effect of 'penalizing' words that appear in many documents in the corpus, which aids in topic modeling as these words are most likely not very specific to the topics themselves."),
                     p(strong("Evaluation of Topic Models")),
                     p("To evaluate the quality of our topic models, we need a measure or score of how well the model performed. We also want to ensure that the topics the model finds are coherent and human interpretable.  We generally only look at the top 5-10 words in each topic to interpret what topic is being represented."),
@@ -385,7 +390,7 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, p("Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
-                           p("Insert graphs here"),
+                           column(12, img(src = "LDA_NMF_tc.png", width = "100%"), align = "center"),
                            p("We see that NMF is outperforming LDA and that the optimal topic model for our corpus is NMF using 75 topics.  The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA.  In the future, the plots representing average coherence of 10 model runs for each number of topics will be smoother.")
                     )
                   ),
@@ -398,8 +403,14 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, p("We give results for the optimal topic model below and proceed to use it for our emerging topics work as well."),
-                           p("Insert plots/tables here"),
-                           p("Insert comments on results here.")
+                           column(12, img(src = "coherence.png", width = "90%"), align = "center"),
+                           p("Insert comments on results here."),
+                           column(12, img(src = "topic_rep.png", width = "90%"), align = "center"),
+                           p("Insert comments on results here."),
+                           column(12, img(src = "topic_rank.png", width = "90%"), align = "center"),
+                           p("Insert comments on results here."),
+                           column(12, DT::dataTableOutput("optimal_topics"))
+                           
                     )
                   )
                 )),
@@ -743,7 +754,8 @@ shinyApp(
     })
 
     output$emerging_topics <- DT::renderDataTable({
-      datatable(all_topics)
+      datatable(reg_topics, rownames = FALSE, options = list(
+        order = list(list(0, 'desc'))))
     })
 
     output$pandemics <- renderPlotly({
@@ -751,7 +763,8 @@ shinyApp(
     })
 
     output$pandemics_topics <- DT::renderDataTable({
-      datatable(pandemic_topic)
+      datatable(pan_topics, rownames = FALSE, options = list(
+        order = list(list(0, 'desc'))))
     })
 
     output$coronavirus <- renderPlotly({
@@ -760,8 +773,13 @@ shinyApp(
     })
 
     output$coronavirus_topics <- DT::renderDataTable({
-      datatable(corona_topic)
+      datatable(cor_topics, rownames = FALSE, options = list(
+        order = list(list(0, 'desc'))))
     })
-
+    
+    output$optimal_topics <- DT::renderDataTable({
+      datatable(opt_topics, rownames = FALSE, options = list(
+        order = list(list(0, 'desc'))))
+    })
   }
 )
