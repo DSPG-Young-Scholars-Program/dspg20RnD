@@ -440,7 +440,9 @@ shinyApp(
                     column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in pandemics are infant respiratory and zika.")),
                     column(12, plotlyOutput("pandemics")),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
-                    column(12, DT::dataTableOutput("pandemics_topics"))
+                    column(12, DT::dataTableOutput("pandemics_topics")),
+                    column(12, img(src = "pan_hot.png", width = "80%"), align = "center"),
+                    column(12, img(src = "pan_cold.png", width = "80%"), align = "center")
                   ),
                   boxPlus(
                     title = "Case Study 2: Coronavirus",
