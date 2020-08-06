@@ -5,8 +5,6 @@ account: dads2busy
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2624166
-bundleId: 3479565
+bundleId: 3480987
 url: https://dads2busy.shinyapps.io/rnd_shiny_app/
-when: 1596658036.80794
-asMultiple: FALSE
-asStatic: FALSE
+when: 1596692265.51549
