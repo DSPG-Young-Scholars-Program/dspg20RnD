@@ -299,6 +299,7 @@ shinyApp(
                     p("As a final step, inspired by the work in [1], we removed many of the most frequent (remaining) words in the corpus. For example, we removed words such as: research, study, project, use, result, understanding, and investigate. These words appear frequently in our corpus, but they do not contribute to topic meaning because they appear in such a high proportion of abstracts that they are not useful for differentiating across topics."),
                     p("Our final dataset includes 690,814 projects. See the graphs below for information about the number of abstracts in the corpus by project start year, the percent of abstracts by department, and the length of abstracts (in number of characters)."),
                     img(src = "combined_graphs.jpeg", align = "center"),
+                    p("HHS represents such a high proportion of the corpus because of the many institutes located within", a(href = "https://www.nih.gov/institutes-nih/list-nih-institutes-centers-offices", "NIH."), "The spike in abstracts between 2009 - 2010 was due to the", a(href = "https://obamawhitehouse.archives.gov/administration/eop/cea/Estimate-of-Job-Creation/", "American Recovery and Reinvestment Act of 2009"), "that was designed to spur job creation after the 2008 Recession through increased science and science-related funding. The character length of abstracts are mainly concentrated around 2500, although there are quite a few longer abstracts as outliers. There are some abstracts over 10000 characters which are not represented in this graph."),
                     footer = p("[1] Alexandra Schofield, Mans Magnusson, Laure Thompson, and David Mimno. Understanding Text Pre-Processing for Latent Dirichlet Allocation. 2017.", a(href = "https://www.cs.cornell.edu/~xanda/winlp2017.pdf.", "https://www.cs.cornell.edu/~xanda/winlp2017.pdf."))
                   ),
 
@@ -410,7 +411,7 @@ shinyApp(
                            column(12, img(src = "topic_rank.png", width = "90%"), align = "center"),
                            p("Insert comments on results here."),
                            column(12, DT::dataTableOutput("optimal_topics"))
-                           
+
                     )
                   )
                 )),
@@ -730,7 +731,7 @@ shinyApp(
                                  tidy_abstracts[tidy_abstracts$dept == "VA", ])
 
       selected_cloud %>%
-        with(wordcloud(word, n, scale = c(2,0.75),
+        with(wordcloud(word, n, scale = c(5,1.5),
                        min.freq = input$freq, max.words = input$max,
                        ordered.colors = TRUE))
     })
@@ -776,7 +777,7 @@ shinyApp(
       datatable(cor_topics, rownames = FALSE, options = list(
         order = list(list(0, 'desc'))))
     })
-    
+
     output$optimal_topics <- DT::renderDataTable({
       datatable(opt_topics, rownames = FALSE, options = list(
         order = list(list(0, 'desc'))))
