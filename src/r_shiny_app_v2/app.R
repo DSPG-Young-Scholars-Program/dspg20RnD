@@ -390,7 +390,7 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
+                    column(12, p("We used the metric of topic coherence to evaluate the best model. Topic coherence is a measure used in topic modeling to measuring the degree of semantic similarity between high scoring words in the topic. Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
                            column(12, img(src = "LDA_NMF_tc.png", width = "100%"), align = "center"),
                            p("We see that NMF is outperforming LDA and that the optimal topic model for our corpus is NMF using 75 topics.  The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA.  In the future, the plots representing average coherence of 10 model runs for each number of topics will be smoother.")
                     )
@@ -405,11 +405,11 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, p("We give results for the optimal topic model below and proceed to use it for our emerging topics work as well."),
                            column(12, img(src = "coherence.png", width = "90%"), align = "center"),
-                           p("Insert comments on results here."),
+                           p("Through the measure of topic coherence, we see that topics on liver, vaccine, and students have a high degree of semantic similarity between high scoring words within the topic."),
                            column(12, img(src = "topic_rep.png", width = "90%"), align = "center"),
-                           p("Insert comments on results here."),
+                           p("We analyzed topics by how represented they are in our data. We found popular topics of cell, patients, proteins and technology."),
                            column(12, img(src = "topic_rank.png", width = "90%"), align = "center"),
-                           p("Insert comments on results here."),
+                           p("We also analyzed topics by their rank. We found dominant topics similarly to the team in “Identifying Core Topics in Technology and Innovation Management: A Topic Model Approach” by analyzing the number of articles which each topic has the highest proportion. Here, we see that a topic on proteins is the highest-ranking topic at almost 5% while the cell topic (most represented topic in graph above) was less than .5% a dominant topic."),
                            column(12, DT::dataTableOutput("optimal_topics"))
 
                     )
@@ -426,8 +426,8 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("About the subset process, etc.")),
-                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. To change graph settings, hover over the top right of the graph."))),
+                    column(12, p("We utilized query words to develop two text corpuses for pandemics and coronavirus. This allowed our team to focus on documents specifically related to these words."))),
+                    #column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. To change graph settings, hover over the top right of the graph."))),
                   boxPlus(
                     title = "Case Study 1: Pandemics",
                     closable = FALSE,
@@ -436,9 +436,10 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Pandemics."), align = 'center'),
-                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
+                    column(12, h2("Pandemics"), align = 'center'),
+                    column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in pandemics are infant respiratory and zika.")),
                     column(12, plotlyOutput("pandemics")),
+                    column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("pandemics_topics"))
                   ),
                   boxPlus(
@@ -449,9 +450,11 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Coronavirus."), align = 'center'),
-                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
+                    column(12, h2("Coronavirus"), align = 'center'),
+                    column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in coronavirus are mers and cmv.")),
+                    #column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("coronavirus")),
+                    column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("coronavirus_topics"))
                   )
                 )),
