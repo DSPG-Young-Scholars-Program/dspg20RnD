@@ -8,6 +8,7 @@ library(wordcloud)
 library(tidyverse)
 library(ggplot2)
 library(DT)
+library(dplyr)
 
 source("theme.R")
 
@@ -17,7 +18,7 @@ tidy_abstracts <- readRDS("data/tidy_abstracts_dept.rds")
 tidy_year <- readRDS("data/tidy_year.rds")
 tidy_year_ab <- readRDS("data/tidy_year_abst.rds")
 #pandemic_topic <- readRDS("data/pandemic_topic.rds")
-pandemic_topic <- readRDS("data/pandemic_topic.rds")
+#pandemic_topic <- readRDS("data/pandemic_topic.rds")
 pandemic <- readRDS("data/thirtypandemictopics.rds")
 #corona_topic <- readRDS("data/corona_topic.rds")
 corona <- readRDS("data/thirtycoronatopics.rds")
@@ -29,6 +30,7 @@ opt_topics <- readRDS("data/opt_res.rds")
 pan_topics <- readRDS("data/pan_topics.rds")
 cor_topics <- readRDS("data/cor_topics.rds")
 full_topics <- readRDS("data/full_topics.rds")
+
 
   # UI ---------------------------------------------------------
 
@@ -241,7 +243,7 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12,
                            p("On the previous tab we looked at representation and “dominance” of the topics produced by the optimal topic model that we found, an NMF model with 75 topics.  We use this same model and now turn our focus to calculating the yearly prevalence of each topic within Federal RePORTER to determine which research topics are trending hot or cold over time.  As described in our Data and Methodology section, we follow the work in [1] and calculate each topic’s average weight per year from 2010-2019 and perform a linear smoothing of these averages to detect which topics have increased or decreased in prevalence over time.  A topic that increases in prevalence is considered “hot”, while a topic that decreases in prevalence is considered “cold”.")),
-                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235.")
+                    footer = p("[1] Griffiths, T., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences, USA, 101(1), 5228-35.", a(href = "https://doi.org/10.1073/pnas.0307752101", "https://doi.org/10.1073/pnas.0307752101."))
                   ),
                   boxPlus(
                     title = "Results for NMF model with 75 Topics",
@@ -317,7 +319,7 @@ shinyApp(
                     img(src = "corpus_eda.png", width="100%", align = "center"),
                     br(),
                     p("The figure on the top left shows that a very high proportion of all projects are funded by U.S. Department of Health and Human Services (HHS). This is due to the fact that HHS houses the National Institutes of Health (NIH), which is comprised of a large number of institutes, each of which is responsible for funding many projects. In addition, the figure on the top right shows the number of abstracts in the corpus across each of the project start years. We notice that there is a large spike in the number of abstracts in 2009 and 2010 before leveling off to a more stable level. This can likely be attributed to the increased science and science-related funding spurred by the",  a(href = "https://obamawhitehouse.archives.gov/administration/eop/cea/Estimate-of-Job-Creation/", "American Recovery and Reinvestment Act of 2009"), "that was designed to create more jobs after the Great Recession. Lastly, the figure on the bottom left displays the number of characters in each of the abstracts. The median length of the abstracts is roughly 2,500 characters, although there are many abstracts that are much longer, including some over 10,000 characters that are not shown in this figure."),
-                    footer = p("[1] Alexandra Schofield, Mans Magnusson, Laure Thompson, and David Mimno. Understanding Text Pre-Processing for Latent Dirichlet Allocation. 2017.", a(href = "https://www.cs.cornell.edu/~xanda/winlp2017.pdf.", "https://www.cs.cornell.edu/~xanda/winlp2017.pdf."))
+                    footer = p("[1] Schofield, A., Magnusson, M., Thompson, L., & Mimno, D. (2017). Understanding text pre-processing for latent Dirichlet allocation. Proceedings of the 1st Workshop for Women and Underrepresented Minorities in Natural Language Processing.", a(href = "https://www.cs.cornell.edu/~xanda/winlp2017.pdf.", "https://www.cs.cornell.edu/~xanda/winlp2017.pdf."))
                   ),
 
                   boxPlus(
@@ -347,11 +349,11 @@ shinyApp(
                     p(strong("Evaluation of Topic Models")),
                     p("To evaluate the quality of our topic models, we need a measure or score of how well the model performed. We also want to ensure that the topics the model finds are coherent and human interpretable.  We generally only look at the top 5-10 words in each topic to interpret what topic is being represented."),
                     p("Given these goals, we use the measure of C", tags$sub("V"), "topic coherence as given in [3] to evaluate our topic models.  As shown in [3], C", tags$sub("V"), "topic coherence is the coherence measure most correlated to human interpretation of topics.  We find the C", tags$sub("V"), "coherence per topic, which is a score that encodes how often the topic words appear together in close proximity within the documents as well as semantic information. To find the C", tags$sub("V"), "topic coherence for the entire model, take take the average of all of the topic C", tags$sub("V"), "coherence scores. The optimal topic model for our corpus is then selected by comparing the C", tags$sub("V"), "topic coherence scores from each model and selecting the one with the highest score."),
-                    footer = p("[1] David M. Blei, Andrew Y. Ng, and Michael I. Jordan. 2003. Latent Dirichlet Allocation. Journal of Machine Learning Research 3, 993–1022.", a(href = "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf", "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf."),
+                    footer = p("[1] Blei, D., Ng, A., & Jordan, M. (2003). Latent Dirichlet allocation.", em("Journal of Machine Learning Research,"), "3, 993-1022.", a(href = "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf", "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf."),
                                br(),
-                               "[2] Daniel D. Lee and H. Sebastian Seung. 1999. Learning the parts of objects by non-negative matrix factorization. Nature 401, 788-791. ",
+                               "[2] Lee, D., & Seung, H. (1999). Learning the parts of objects by non-negative matrix factorization.", em("Nature,"), "401, 788-791.",
                                br(),
-                               "[3] Michael Röder, Andreas Both, and Alexander Hinneburg. 2015. Exploring the Space of Topic Coherence Measures. In Proceedings of the Eighth ACM International Conference on Web Search and Data Mining (WSDM ’15). Association for Computing Machinery, New York, NY, USA, 399–408. DOI:", a(href = "https://doi.org/10.1145/2684822.2685324", "https://doi.org/10.1145/2684822.2685324"))
+                               "[3] Röder, M., Both, A., & Hinneburg, A. (2015). Exploring the space of topic coherence measures.", em("WSDM '15: Proceedings of the Eighth ACM International Conference on Web Search and Data Mining"), "(pp. 399-408). Association for Computing Machinery, New York, NY.", a(href = "https://doi.org/10.1145/2684822.2685324", "https://doi.org/10.1145/2684822.2685324"))
                   ),
 
                   boxPlus(
@@ -374,7 +376,9 @@ shinyApp(
                       tags$li(strong("TFIDF:"), "we use the TFIDF term-document matrix of weighted counts per word per document for our full dataset of abstracts to extract the 500 projects that have the largest weights for the word “pandemic” in their abstracts. "),
                       tags$li(strong("Latent Semantic Indexing (LSI):"), "we use a truncated singular value decomposition on the TFIDF term-document matrix for our full dataset of abstracts to extract the 500 projects that have abstracts most relevant to the search query for the word “pandemic”.  LSI differs from the previous two information retrieval approaches in the fact that project abstracts returned as relevant to the search query do not necessarily have to contain the word “pandemic”.  But they may contain words that are latently related to the word “pandemic”.  For more information about LSI, the interested reader can see the seminal paper [3].  We use the implementation of the truncated singular value decomposition in the Python package Scikit-Learn. ")),
                     p("To create the smaller corpus we then take the set of unique projects from the union of the results returned from the three information retrieval methods above.  "),
-                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235. ", br(), " [2] Hakyeon Lee and Pilsung Kang. 2018. Identifying core topics in technology and innovation management studies: a topic model approach. The Journal of Technology Transfer 43, 1291–1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."), br(), "[3] Scott Deerwester, Susan T. Dumais, George W. Furnas, Thomas K. Landauer, and Richard Harshman. 1990. Indexing by latent semantic analysis. Journal of the American Society for Information Science 41 (6), 391-407. ")
+                    footer = p("[1] Griffiths, T., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences, USA, 101(1), 5228-35.", a(href = "https://doi.org/10.1073/pnas.0307752101", "https://doi.org/10.1073/pnas.0307752101."), br(), 
+                               "[2] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach.", em("Journal of Technology Transfer,"), "43, 1291-1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."), br(), 
+                               "[3] Deerwester, S., Dumais, S., Furnas, G., Landauer, T., & Harshman, R. (1990). Indexing by latent semantic analysis.", em("Journal of the American Society for Information Science,"), "41(6), 391-407.")
                     )
 
                   )),
@@ -436,7 +440,7 @@ shinyApp(
                            column(12, br()),
                            column(12, DT::dataTableOutput("optimal_topics"))
                     ),
-                    footer = p("[1] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach. The Journal of Technology Transfer, 43(5), 1291-1317.")
+                    footer = p("[1] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach.", em("Journal of Technology Transfer,"), "43, 1291-1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."))
                   )
                 )),
 
@@ -456,7 +460,7 @@ shinyApp(
                     column(12, p("Research on pandemics is an area of particular interest to our sponsor. We utilized information retrieval techniques to develop two smaller corpora from our larger dataset. One focused on pandemics and the other focused more specifically on abstracts related to coronavirus."),
                                p("We used a combination of three different information retrieval techniques in compiling both the pandemic and coronavirus corpora – Literal Term Matching, TFIDF, and Latent Semantic Indexing (LSI) – as outlined in our Data and Methodology section.  This resulted in a corpus of 1,137 projects related to pandemics and another corpus of 1,012 projects related to coronavirus. We then conducted the \"hot\" and \"cold\" topic analysis of [1] on each corpus.")
                            ),
-                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235.")
+                    footer = p("[1] Griffiths, T., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences, USA, 101(1), 5228-35.", a(href = "https://doi.org/10.1073/pnas.0307752101", "https://doi.org/10.1073/pnas.0307752101."))
                     ),
 
                   boxPlus(
@@ -817,35 +821,38 @@ shinyApp(
 
     output$emerging <- renderPlotly({
 
-      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = topics$Topic_Legend)
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = topics$Topic_Legend) %>% 
+        layout(xaxis = list(title="Year"), yaxis = list(title="Mean Weight"))
     })
 
     output$emerging_topics <- DT::renderDataTable({
       datatable(full_topics, rownames = FALSE, options = list(
-        order = list(list(0, 'desc'))))
+        order = list(list(2, 'asc'))))
     })
 
     output$pandemics <- renderPlotly({
-      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic, name = pandemic$Topic_Legend)
+      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic, name = pandemic$Topic_Legend) %>% 
+        layout(xaxis = list(title="Year"), yaxis = list(title="Mean Weight"))
     })
 
     output$pandemics_topics <- DT::renderDataTable({
       datatable(pan_topics, rownames = FALSE, options = list(
-        order = list(list(0, 'desc'))))
+        order = list(list(2, 'asc'))))
     })
 
     output$coronavirus <- renderPlotly({
-      plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic, name = corona$Topic_Legend)
+      plot_ly(corona, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = corona$Topic, name = corona$Topic_Legend) %>%
+        layout(xaxis = list(title="Year"), yaxis = list(title="Mean Weight"))
     })
 
     output$coronavirus_topics <- DT::renderDataTable({
       datatable(cor_topics, rownames = FALSE, options = list(
-        order = list(list(0, 'desc'))))
+        order = list(list(2, 'asc'))))
     })
 
     output$optimal_topics <- DT::renderDataTable({
       datatable(opt_topics, rownames = FALSE, options = list(
-        order = list(list(0, 'desc'))))
+        order = list(list(3, 'asc'))))
     })
   }
 )
