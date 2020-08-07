@@ -15,6 +15,7 @@ source("theme.R")
 
 tidy_abstracts <- readRDS("data/tidy_abstracts_dept.rds")
 tidy_year <- readRDS("data/tidy_year.rds")
+tidy_year_ab <- readRDS("data/tidy_year_abst.rds")
 #pandemic_topic <- readRDS("data/pandemic_topic.rds")
 pandemic <- readRDS("data/thirtypandemictopics.rds")
 #corona_topic <- readRDS("data/corona_topic.rds")
@@ -672,17 +673,26 @@ shinyApp(
 
   server = function(input, output) {
 
-    filtered_data <- reactive({
+    filtered_year <- reactive({
       dplyr::filter(tidy_year, word == input$search_term)
     })
 
+    filtered_ab <- reactive({
+      dplyr::filter(tidy_year_ab, word == input$search_term)
+    })
+
     output$word_time <- renderPlot({
-      ggplot(filtered_data(), aes(x = year, y = n)) +
-        geom_point(size=3) +
-        labs(title = "Word Frequency Over Time", subtitle = "Search Any Term", color = 'Year', x = "Year", y = "Word Frequency") +
-        geom_smooth(aes(group = 1), se = FALSE, color = 'light blue', size = 2) +
+      ggplot() +
+        geom_point(data = filtered_year(), mapping = aes(x = year, y = n), size = 3, color = "#0072B2") +
+        geom_smooth(data = filtered_year(), aes(x= year, y = n), se = FALSE, color = "#56B4E9", size = 2) +
+        geom_point(data = filtered_ab(), mapping = aes(x = year, y = n), size=3, color = "#D55E00") +
+        geom_smooth(data = filtered_ab(), aes(x= year, y = n, group = 1), se = FALSE, color = "#CC79A7", size = 2) +
+        labs(title = "Term Frequency Over Time", subtitle = "Search Any Term", color = 'Year', x = "Year", y = "Word Frequency") +
         scale_x_continuous(breaks = seq(2009, 2019, by = 1)) +
-        theme_bw()
+        scale_y_continuous(sec.axis = dup_axis(name = "Document Frequency")) +
+        theme_bw() +
+        theme(axis.text.y.left = element_text(color = "#0072B2")) +
+        theme(axis.text.y.right = element_text(color = "#D55E00"))
     })
 
     output$important_words <- renderPlot({
