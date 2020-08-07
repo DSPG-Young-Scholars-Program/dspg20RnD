@@ -29,3 +29,9 @@ df$Slope = round(df$Slope,6)
 saveRDS(df, "../r_shiny_app_v2/data/cor_topics.rds")
 ```
 
+```{r}
+df <- read_csv("full_topics.csv")
+df$Slope = round(df$Slope,6)
+saveRDS(df, "../r_shiny_app_v2/data/full_topics.rds")
+```
+
