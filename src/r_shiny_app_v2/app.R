@@ -15,6 +15,7 @@ source("theme.R")
 
 tidy_abstracts <- readRDS("data/tidy_abstracts_dept.rds")
 tidy_year <- readRDS("data/tidy_year.rds")
+tidy_year_ab <- readRDS("data/tidy_year_abst.rds")
 #pandemic_topic <- readRDS("data/pandemic_topic.rds")
 pandemic <- readRDS("data/thirtypandemictopics.rds")
 #corona_topic <- readRDS("data/corona_topic.rds")
@@ -672,8 +673,12 @@ shinyApp(
 
   server = function(input, output) {
 
-    filtered_data <- reactive({
+    filtered_year <- reactive({
       dplyr::filter(tidy_year, word == input$search_term)
+    })
+
+    filtered_ab <- reactive({
+      dplyr::filter(tidy_year_ab, word == input$search_term)
     })
 
     output$word_time <- renderPlot({
