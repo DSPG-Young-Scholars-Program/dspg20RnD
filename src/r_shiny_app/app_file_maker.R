@@ -1,6 +1,6 @@
 #Create files for import into shiny app
 
-final_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/final/app_data.csv")
+final_abstracts <- read.csv("~/git/dspg20rnd/dspg20RnD/data/final/dashboard_data/app_data.csv")
 
 library(tidyverse)
 library(tidytext)
@@ -55,6 +55,26 @@ tidy_year <- tidy_year %>%
 tidy_year$year <- as.numeric(tidy_year$year)
 
 saveRDS(tidy_year, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_year.rds")
+
+final_abstracts$ID <- c(1:690814)
+tidy_year_ab <- tibble(year = final_abstracts$Year, id = final_abstracts$ID, text = final_abstracts$ABSTRACT)
+id_year <- tibble(year = final_abstracts$Year, id = final_abstracts$ID)
+
+tidy_year_ab <- tidy_year_ab %>%
+  filter(year > 2009) %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  count(word, id, sort = TRUE)
+
+tidy_year_ab <- right_join(tidy_year_ab, id_year, by = "id")
+
+tidy_year_ab_count <- tidy_year_ab %>%
+  select(word, year) %>%
+  count(year, word, sort = TRUE)
+
+tidy_year_ab_count$year <- as.numeric(tidy_year_ab_count$year)
+
+saveRDS(tidy_year_ab_count, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_year_abst.rds")
 
 #All topics
 topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu6_SeventyFive_FullDF.csv")
