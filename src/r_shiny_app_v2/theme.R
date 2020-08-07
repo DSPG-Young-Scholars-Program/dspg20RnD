@@ -3,7 +3,7 @@ customTheme <- shinyDashboardThemeDIY(
   
   ### general
   appFontFamily = "Arial"
-  ,appFontColor = "grey"
+  ,appFontColor = "black" #"grey"
   ,primaryFontColor = "grey"
   ,infoFontColor = "rgb(0,0,0)"
   ,successFontColor = "rgb(0,0,0)"

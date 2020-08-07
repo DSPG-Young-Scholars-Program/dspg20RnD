@@ -1,3 +1,39 @@
+# read in dataset code added --------------
+
+library(readr)
+library(gridExtra)
+library(ggplot2)
+library(dplyr)
+
+data_for_liz <- read_csv("../../data/final/dashboard_data/data_for_liz.csv")
+
+# ------------------
+
+# Find Start Year --------
+
+data_for_liz$START_YEAR = 0
+
+for(i in 1:nrow(data_for_liz))
+{
+  d = data_for_liz$PROJECT_START_DATE[i]
+
+  splitdate = strsplit(d, "/")
+  
+  if(length(splitdate[[1]]) == 3)
+  {
+    y = splitdate[[1]][3]
+  }
+  else
+  {
+    y = splitdate[[1]][1]
+  }
+  
+  data_for_liz$START_YEAR[i] <- as.integer(y) 
+}
+
+# ---------------------------------------
+
+
 
 data_for_liz %>%
   count(DEPARTMENT) %>%
@@ -18,9 +54,9 @@ data_for_liz %>%
   theme_bw()
 
 data_for_liz %>%
-  filter(START_DATE > 2007) %>%
-  filter(START_DATE < 2020) %>%
-  ggplot(aes(x = as.factor(START_DATE), fill = as.factor(START_DATE))) +
+  filter(START_YEAR > 2007) %>%
+  filter(START_YEAR < 2020) %>%
+  ggplot(aes(x = as.factor(START_YEAR), fill = as.factor(START_YEAR))) +
   geom_bar(show.legend = FALSE) +
   xlab("Year") +
   ylab("Number of Abstracts") +
@@ -43,6 +79,11 @@ data_for_liz %>%
   ggtitle("Number of Characters per Abstracts") +
   theme_bw() -> char_hist
 
-grid.arrange(dept_gr, date_gr, char_hist, nrow = 2)
+#grid.arrange(dept_gr, date_gr, char_hist, nrow = 2)
+
+grobs = list(dept_gr, date_gr, char_hist)
+
+margin = theme(plot.margin = unit(c(1,1,0.5,1), "cm"))  # top, right, bottom, left
+grid.arrange(grobs = lapply(grobs, "+", margin), nrow = 2)
 
 

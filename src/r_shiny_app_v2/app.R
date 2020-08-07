@@ -24,9 +24,10 @@ corona <- readRDS("data/thirtycoronatopics.rds")
 topics <- readRDS("data/seventyfivetopicsdf.rds")
 
 opt_topics <- readRDS("data/opt_res.rds")
-reg_topics <- readRDS("data/reg_topics.rds")
+#reg_topics <- readRDS("data/reg_topics.rds")
 pan_topics <- readRDS("data/pan_topics.rds")
 cor_topics <- readRDS("data/cor_topics.rds")
+full_topics <- readRDS("data/full_topics.rds")
 
   # UI ---------------------------------------------------------
 
@@ -96,6 +97,8 @@ shinyApp(
       customTheme,
       fluidPage(
       tabItems(
+        
+        
         tabItem(tabName = "homepage",
                 fluidRow(
                   boxPlus(
@@ -111,6 +114,8 @@ shinyApp(
 
                   ))),
 
+        
+        
         tabItem(tabName = "overview",
                 fluidRow(
                   boxPlus(
@@ -120,25 +125,28 @@ shinyApp(
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    column(12, align = 'center', h3(strong("R&D Abstracts: Emerging Topic Identification and Development of Visualization Tools"))),
+                    column(12, align = 'center', h1(strong("R&D Abstracts: Emerging Topic Identification"))),
+                    br(),
                     h2("Project Description"),
-                    p("This project utilizes topic models and visualization techniques to identify emerging research and development (R&D) topics within a corpus of publically available abstracts from",  a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), "The research builds upon an ongoing collaboration between the UVA Social and Decision Analytics Division (SDAD) and the National Center for Science and Engineering Statistics (NCSES) examining the use of administrative records to supplement or enhance data collected in NCSES surveys. Key components of our work include: (1) expanding the dataset to include the 2019 abstracts and (2) comparing two types of topic modeling techniques - Latent Dirichlet Allocation (LDA) and Nonnegative Matrix Factorization (NMF)."),
-                    p("Our topic model analysis reveals 'hot' and 'cold' topics (i.e. those that increase or decrease in popularity) across time. We provide an interactive dashboard where users may explore our topic model results and investigate a pandemics case study. With the dashboard, users are able to view topics produced by the models, see key words associated with each topics, and track how the popularity of these topics fluctuate over time. Our project demonstrates the value of applying topic modeling and visualization to organize and interpret large government data sets and faciliate data-drive policy decisions."),
+                    p("This project uses topic models and visualization techniques to identify emerging research and development (R&D) topics within a corpus of publicly available abstracts from", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER."), "The research builds upon an ongoing collaboration between the UVA Biocomplexity Institute Social and Decision Analytics Division (SDAD) and the National Center for Science and Engineering Statistics (NCSES) examining the use of administrative records to supplement or enhance data collected in NCSES surveys. Key components of our work include: (1) expanding the dataset to include the 2019 abstracts and (2) comparing two types of topic modeling techniques - Latent Dirichlet Allocation (LDA) and Nonnegative Matrix Factorization (NMF)."),
+                    p("Our topic model analysis reveals 'hot' and 'cold' topics (i.e. those that increase or decrease in popularity) across time. We provide an interactive dashboard where users may explore our topic model results and investigate a pandemics case study. With the dashboard, users are able to view topics produced by the models, see key words associated with each topics, and track how the popularity of these topics fluctuate over time. Our project demonstrates the value of applying topic modeling and visualization to organize and interpret large government data sets and facilitate data-driven policy decisions."),
                     h2("Our Approach"),
                     img(src = "framework.png", width = "300px", align = "right"),
                     p("The foundation of our approach is the UVA SDAD Data Science Framework. Some highlights from applying the framework include:"),
                     #br(),
-                    p(strong("Problem Identification:"), "Because we were extendind a previous study, we began by reviewing prior work on this project and conducting a literature review focused on identifying emerging topics and topic model visualization."),
+                    p(strong("Problem Identification:"), "Because we were extending a previous study, we began by reviewing prior work on this project and conducting a literature review focused on identifying emerging topics and topic model visualization."),
                     #br(),
                     p(strong("Data Discovery:"), "We discovered that Federal RePORTER had been updated with data from 2019, which was not included in the prior word, so we acquired the most recent set of abstracts to include in our analysis."),
-                    p(strong("Data Wrangling:"), "We performed exploratory data analysis on our revised dataset and cleaned & processed abstrats to prepare for their use in topic modeling."),
-                    p(strong("Statistical Modeling & Analyses:"), "We compared LDA and NMF to find an optimal topic model algorithem for our dataset. Informed by our literature review, we indentified emerging topics and designated topics as 'hot' or 'cold' based on how their popularly changed across time. As a case study on emerging topics, we focused on identifying topics related to pandemic-related research."),
-                    p(strong("Communication & Dissemination:"), "We constructed an RShiny dashboard, created a poster, and wrote a brief for", a(href = 'https://www.methodspace.com/category/sage-posts/', "SAGE Publications MethodSpace blog.")),
+                    p(strong("Data Wrangling:"), "We performed exploratory data analysis on our revised dataset and cleaned & processed abstracts to prepare for their use in topic modeling."),
+                    p(strong("Statistical Modeling & Analyses:"), "We compared LDA and NMF to find an optimal topic model algorithm for our dataset. Informed by our literature review, we identified emerging topics and designated topics as 'hot' or 'cold' based on how their popularity changed across time. As a case study on emerging topics, we focused on identifying topics related to pandemic-related research."),
+                    p(strong("Communication & Dissemination:"), "We constructed an RShiny dashboard, created a poster, and wrote a brief for SAGE Publications MethodSpace blog."),
                     h2("Ethical Considerations"),
-                    p("Ethics are a key component of the Data Science Framework and inform every step of this process. We did not collect or utilize any individual or demographic data for this project, which minimizes the potential harm to individuals. However, in considering the larger implications of the project, we recognize that our dataset only included federally funded grants within the United States. It does not necessarily capture the full scope of research and development within the United States nor around the world. We also recognize that", a(href = "https://iaphs.org/identifying-implicit-bias-grant-reviews/", "implicit bias in research funding"), "may impact the representation of topics within our dataset and, while not addressed within the scope of this project, could serve as a focus for future analysis." )
+                    p("Ethics are a key component of the Data Science Framework and inform every step of this process. We did not collect or utilize any individual or demographic data for this project, which minimizes the potential harm to individuals. However, in considering the larger implications of the project, we recognize that our dataset only included federally funded grants within the United States. It does not necessarily capture the full scope of research and development within the United States nor around the world. We also recognize that", a(href = "https://iaphs.org/identifying-implicit-bias-grant-reviews/", "implicit bias in research funding"), "may affect the representation of topics within our dataset and, while not addressed within the scope of this project, could serve as a focus for future analysis." )
                   )
                 )),
 
+        
+        
         tabItem(tabName = "graph",
                 fluidRow(
                   boxPlus(
@@ -162,6 +170,7 @@ shinyApp(
                     collapsible = TRUE,
                     width = NULL,
                     enable_sidebar = TRUE,
+                    sidebar_background = "lightgrey", ##
                     sidebar_width = 20,
                     sidebar_start_open = TRUE,
                     sidebar_content = searchInput("search_term", label = "Type in your search term and then press the Enter key", value = "keyword"),
@@ -178,6 +187,7 @@ shinyApp(
                     collapsible = TRUE,
                     width = 6,
                     enable_sidebar = TRUE,
+                    sidebar_background = "lightgrey", ##
                     sidebar_width = 20,
                     sidebar_start_open = TRUE,
                     sidebar_content = tagList(selectInput("department", "Select Funding Department",
@@ -197,6 +207,7 @@ shinyApp(
                     collapsible = TRUE,
                     width = 6,
                     enable_sidebar = TRUE,
+                    sidebar_background = "lightgrey", ##
                     sidebar_width = 22,
                     sidebar_start_open = TRUE,
                     sidebar_content = tagList(selectInput("selection", "Choose a department:",
@@ -206,15 +217,17 @@ shinyApp(
                                               hr(),
                                               sliderInput("freq",
                                                           "Minimum Frequency:",
-                                                          min = 1000,  max = 10000, value = 5000, step = 1000),
+                                                          min = 1000,  max = 10000, value = 1000, step = 1000),
                                               sliderInput("max",
                                                           "Maximum Number of Words:",
                                                           min = 10,  max = 50,  value = 25, step = 5)),
-                    column(10, plotOutput("wordcloud")),
+                    column(9, plotOutput("wordcloud")),
                     footer = "The size of each word represents how frequently the word occurs in the abstracts for a given department.  Larger words appear more often."
                   )
                 )),
 
+        
+        
         tabItem(tabName = "both",
                 fluidRow(
                   boxPlus(
@@ -225,7 +238,11 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("Some text describing hot and cold emerging topics, where this idea came from, potentially citing that other paper"))),
+                    column(12, p("To determine which research topics are trending hot or cold over time, we used our NMF model results to calculate the yearly prevalence of each topic within Federal RePORTER. Non-negative matrix factorization provides the distribution of each topic across every document within the corpus, which we summarized into each topic’s average weight by year. As detailed in Thomas L. Griffiths and Mark Steyvers’ 2004 paper Finding Scientific Topics, one can fit a line of best fit onto each topic’s average weight by year as a metric of whether that topic has increased or decreased in prevalence over time."),
+                           p("After we conducted this linear trend analysis on these values, we defined topics within our model that saw the sharpest increases as emerging, meaning that an influx of research abstracts within Federal RePORTER’s database centered on that specific topic over the last decade. "),
+                           p("The following graphs detail this emerging topics analysis. Our Emerging Topics graph illustrates the year-by-year average weight per topic of our 75 topic NMF model, with the slope of each topic’s best-fit line shown in the table below. The Hottest & Coldest Topics graphs provide the five highest and five lowest topic slopes determined by our model. ")
+                           )
+                    ),
                   boxPlus(
                     title = "Emerging Topics",
                     closable = FALSE,
@@ -235,6 +252,9 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Emerging Topics"), align = 'center'),
+                    column(12, p("Explore topics by hovering over lines to see the year and proportion information for each topic."),
+                                p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly.")
+                          ),
                     column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
                     column(12, plotlyOutput("emerging")),
                     column(12, DT::dataTableOutput("emerging_topics"))
@@ -250,12 +270,17 @@ shinyApp(
                     enable_sidebar = FALSE,
                     column(12, h2("Hot & Cold Topics")),
                     column(12, p("Information about these figures."), align = 'center'),
-                    p("outputs")
+                    p("outputs"),
                     #column(12, plotlyOutput("emerging")),
                     #column(12, DT::dataTableOutput("emerging_topics"))
+                    column(12, img(src = "pan_hot.png", width = "80%"), align = "center"),
+                    column(12, img(src = "pan_cold.png", width = "80%"), align = "center")
                   )
                 )),
 
+        
+        
+        
         tabItem(tabName = "data",
                 fluidRow(
                   boxPlus(
@@ -266,7 +291,7 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     h3("Federal RePORTER"),
-                    p("Our dataset consists of abstracts and project information for more than 1 million R&D grants entered into the ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER"), "system from 2008 - 2019. The Federal RePORTER database describes it as,  \"a collaborative effort led by STAR METRICS® to create a searchable database of scientific awards from [federal] agencies. This database promotes transparancy and engages the public, the research community, and agencies to describe federal science research investments and provide empirical data for science policy.\" Project information includes project title, department, agency, principle investigator, organization, and project start data. We downloaded our data using the Federal ExPORTER page.")),
+                    p("Our dataset consists of abstracts and project information for more than 1 million R&D grants entered into the ", a(href = "https://federalreporter.nih.gov/", "Federal RePORTER"), "system from 2008 - 2019. The Federal RePORTER database describes it as,  \"a collaborative effort led by STAR METRICS® to create a searchable database of scientific awards from [federal] agencies. This database promotes transparancy and engages the public, the research community, and agencies to describe federal science research investments and provide empirical data for science policy.\" Project information includes project title, department, agency, principal investigator, organization, and project start date. We downloaded our data using the Federal ExPORTER page.")),
 
                   boxPlus(
                     title = "Data Preparation",
@@ -277,7 +302,7 @@ shinyApp(
                     collapsible = TRUE,
                     h3("Data Preparation"),
                     p(strong("Defining 'Emerging' Topics:")),
-                    p("Our project maps the increase and decrease in new federally funded research projects associated with topics across time. We define a topic as having 'emerged' the first time a project or projects associated with the topic and identified in the corpus. We prepared our data for analysis in keeping with this goal."),
+                    p("Our project maps the increase and decrease in new federally funded research projects associated with topics across time. We define a topic as having 'emerged' the first time a project or projects associated with the topic are identified in the corpus. We prepared our data for analysis in keeping with this goal."),
                     p("We needed to:"),
                     tags$ol(
                       tags$li("fill in missing information for project start date"),
@@ -294,13 +319,14 @@ shinyApp(
                     tags$ol(
                       tags$li(strong("Tokenization and Lemmatization:"), "Abstracts are transformed into a list of their words (each word is a 'token') and each word is lemmatized (i.e., variations of same word and part-of-speech are reduced to their shared dictionary form of lemma). For example, jumped (verb) and jumps (verb) would both be reduced to jump (verb) but jumpy (adjective) would not."),
                       tags$li(strong("Stop Word Removal"), "Tokens belonging to a standard stop word list are removed. Stop words are common words that provide little information on content and do not contribute to topic meaning, They include words such as: 'as, by, if, most, several, whereas.; We also added custom stop words not included in the standard list (e.g. furthermore, overall, specifically)."),
-                      tags$li(strong("N-grams Creation:"), "We utilized bi-grams and tri-grams in pur abstract text. A bi-gram is two words that appear often enough one after the other that they get combined into one token. For example, 'anti_virus' is a bigram. A tri-gram is similar except it contains three words that appear sequentially.")),
+                      tags$li(strong("N-grams Creation:"), "We utilized bi-grams and tri-grams in our abstract text. A bi-gram is two words that appear often enough one after the other that they get combined into one token. For example, 'anti_virus' is a bigram. A tri-gram is similar except it contains three words that appear sequentially.")),
                     p("We then removed non-alphanumeric characters in tokens, single character tokens, and numeric tokens that were not years. Listed in the table are the Python packages that we used for each step"),
                     tableOutput("packages"),
                     p("As a final step, inspired by the work in [1], we removed many of the most frequent (remaining) words in the corpus. For example, we removed words such as: research, study, project, use, result, understanding, and investigate. These words appear frequently in our corpus, but they do not contribute to topic meaning because they appear in such a high proportion of abstracts that they are not useful for differentiating across topics."),
                     p("Our final dataset includes 690,814 projects. See the graphs below for information about the number of abstracts in the corpus by project start year, the percent of abstracts by department, and the length of abstracts (in number of characters)."),
-                    img(src = "combined_graphs.jpeg", align = "center"),
-                    p("HHS represents such a high proportion of the corpus because of the many institutes located within", a(href = "https://www.nih.gov/institutes-nih/list-nih-institutes-centers-offices", "NIH."), "The spike in abstracts between 2009 - 2010 was due to the", a(href = "https://obamawhitehouse.archives.gov/administration/eop/cea/Estimate-of-Job-Creation/", "American Recovery and Reinvestment Act of 2009"), "that was designed to spur job creation after the 2008 Recession through increased science and science-related funding. The character length of abstracts are mainly concentrated around 2500, although there are quite a few longer abstracts as outliers. There are some abstracts over 10000 characters which are not represented in this graph."),
+                    img(src = "corpus_eda.png", width="100%", align = "center"),
+                    br(),
+                    p("The figure on the top left shows that a very high proportion of all projects are funded by U.S. Department of Health and Human Services (HHS). This is due to the fact that HHS houses the National Institutes of Health (NIH), which is comprised of a large number of institutes, each of which is responsible for funding many projects. In addition, the figure on the top right shows the number of abstracts in the corpus across each of the project start years. We notice that there is a large spike in the number of abstracts in 2009 and 2010 before leveling off to a more stable level. This can likely be attributed to the increased science and science-related funding spurred by the",  a(href = "https://obamawhitehouse.archives.gov/administration/eop/cea/Estimate-of-Job-Creation/", "American Recovery and Reinvestment Act of 2009"), "that was designed to create more jobs after the Great Recession. Lastly, the figure on the bottom left displays the number of characters in each of the abstracts. The median length of the abstracts is roughly 2,500 characters, although there are many abstracts that are much longer, including some over 10,000 characters that are not shown in this figure."),
                     footer = p("[1] Alexandra Schofield, Mans Magnusson, Laure Thompson, and David Mimno. Understanding Text Pre-Processing for Latent Dirichlet Allocation. 2017.", a(href = "https://www.cs.cornell.edu/~xanda/winlp2017.pdf.", "https://www.cs.cornell.edu/~xanda/winlp2017.pdf."))
                   ),
 
@@ -313,10 +339,10 @@ shinyApp(
                     collapsible = TRUE,
                     h3("Topic Modeling"),
                     p("When presented with a collection of text documents, or a corpus, one of the first steps one might take is to understand and classify each document into different topics or themes. For small corpora, it may be feasible to manually read and record the topics of each document; however, this is clearly impractical for large corpora of interest in recent years such as Twitter posts or articles from a scientific journal. Topic modeling helps resolve this issue by automatically processing a corpus and discovering topics that characterize the documents.  "),
-                    p("An additional benefit is that document can be assigned to miltiple topics rather than just one, a reasonable assumption given that many documents consist of a combination of themes.  We examined two topic modeling algorithms over the course of this project: Latent Dirichlet allocation (LDA) and non-negative matrix factorization (NMF).  We used the Python package Scikit-Learn for the implementations of both LDA and NMF. "),
+                    p("An additional benefit is that a document can be assigned to miltiple topics rather than just one, a reasonable assumption given that many documents consist of a combination of themes.  We examined two topic modeling algorithms over the course of this project: Latent Dirichlet allocation (LDA) and non-negative matrix factorization (NMF).  We used the Python package Scikit-Learn for the implementations of both LDA and NMF. "),
                     p(strong("Topic Model Input and Output")),
-                    p("LDA and NMF both take a term-document matrix of our cleaned and processed abstract text as input.  A term-document matrix is a mathematical representation of text data as numerical data that can then be analyzed using a statistical model or machine learning algorithm.  More specifically, a term-document matrix tracks is comprised of the frequency count of each word in each document.   "),
-                    p("LDA and NMF also output the same two matricies, consisting of the results of the topic model."),
+                    p("LDA and NMF both take a term-document matrix of our cleaned and processed abstract text as input.  A term-document matrix is a mathematical representation of text data as numerical data that can then be analyzed using a statistical model or machine learning algorithm.  More specifically, a term-document matrix is comprised of the frequency count of each word in each document.   "),
+                    p("LDA and NMF also output the same two matrices, consisting of the results of the topic model."),
                     tags$ol(
                       tags$li(strong("Document-Term Matrix:"), "this matrix contains information on which topics appear in which documents and how much they appear. LDA represents this information as probabilities of each topic in each document whereas NMF gives weights for each topic in each document."),
                       tags$li(strong("Topic-Term Matrix:"), "this matrix contains information on which words appear in which topics. Again, LDA represents this information using the probability of each word appearing in each topic and NMF gives weights for each word appearing in each topic.  When analyzing topics, we generally only look at the 5 or 10 words in each topic with the highest probability/weight.  ")),
@@ -326,12 +352,12 @@ shinyApp(
                     p("The seminal paper on LDA was written by David M. Blei, Andrew Y. Ng, and Michael I. Jordan [1]. "),
                     p(strong("Non-Negative Matrix Factorization")),
                     p("NMF is a linear algebra based method that is also a soft-clustering algorithm.  NMF is an approximate matrix decomposition that finds the document-topic matrix and topic-term matrix through iterative optimization.  The idea is that the document-term matrix can be approximated as the product of the document-topic matrix and the topic-term matrix, in effect clustering words together into topics, and weighting those topics amongst every document. This approximation yields the best attempt to recreate the original corpus with a topic structure.  The seminal paper on NMF was written by Daniel D. Lee and H. Sebastian Seung [2]. "),
-                    column(12, img(src = "nmf_image.png", width = "80%"), align="center"), #, height = "100px"),
+                    column(12, img(src = "nmf_image.png", width = "70%"), align="center"), #, height = "100px"),
                     p("In our work, we use a weighted document-term matrix as input to NMF in order to achieve better topic modeling results.  Instead of only using the frequency of each word in each document, we use a term frequency-inverse document frequency (TFIDF) weighting scheme for each word in each document.  TFIDF has the effect of 'penalizing' words that appear in many documents in the corpus, which aids in topic modeling as these words are most likely not very specific to the topics themselves."),
                     p(strong("Evaluation of Topic Models")),
                     p("To evaluate the quality of our topic models, we need a measure or score of how well the model performed. We also want to ensure that the topics the model finds are coherent and human interpretable.  We generally only look at the top 5-10 words in each topic to interpret what topic is being represented."),
-                    p("Given these goals, we use the measure of C", tags$sub("V"), "topic coherence as given in [3] to evaluate our topic models.  As shown in [3], C", tags$sub("V"), "topic coherence is the coherence measure most correlated to human interpretation of topics.  We find the C", tags$sub("V"), "coherence per topic, which is a score that encodes how often the topic words appear together in close proximity within the documents as well aas semantic information. To find the C", tags$sub("V"), "topic coherence for the entire model, take take the average of all of the topic C", tags$sub("V"), "coherence scores. The optimal topic model for our corpus is then selected by comparing the C", tags$sub("V"), "topic coherence scores from each model and selecting the one with the highest score."),
-                    footer = p("[1] David M. Blei, Andrew Y. Ng, and Michael I. Jordan. 2003. Latent dirichlet allocation. Journal of Machine Learning Research 3, 993–1022.", a(href = "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf", "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf."),
+                    p("Given these goals, we use the measure of C", tags$sub("V"), "topic coherence as given in [3] to evaluate our topic models.  As shown in [3], C", tags$sub("V"), "topic coherence is the coherence measure most correlated to human interpretation of topics.  We find the C", tags$sub("V"), "coherence per topic, which is a score that encodes how often the topic words appear together in close proximity within the documents as well as semantic information. To find the C", tags$sub("V"), "topic coherence for the entire model, take take the average of all of the topic C", tags$sub("V"), "coherence scores. The optimal topic model for our corpus is then selected by comparing the C", tags$sub("V"), "topic coherence scores from each model and selecting the one with the highest score."),
+                    footer = p("[1] David M. Blei, Andrew Y. Ng, and Michael I. Jordan. 2003. Latent Dirichlet Allocation. Journal of Machine Learning Research 3, 993–1022.", a(href = "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf", "http://jmlr.org/papers/volume3/blei03a/blei03a.pdf."),
                                br(),
                                "[2] Daniel D. Lee and H. Sebastian Seung. 1999. Learning the parts of objects by non-negative matrix factorization. Nature 401, 788-791. ",
                                br(),
@@ -346,8 +372,8 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     h3("Emerging Topics"),
-                    p("Given our optimal topic mode, an NMF model with 75 topics, we analyze its results to discover and characterize 'hot' and 'cold' topics. To do so, we follow the approach of [1] with the exception that we use our optimal NMF topic model, not an LDA model. o categorize a topic as “hot” or “cold”, we first use the document-topic matrix to find the average weight of each topic in each year between 2010-2019. This creates a set of points for each topic, where each point has the form (year, weightyear).  We then model the relationship between the weights and years for each topic using linear regression. Topics that have regression lines with positive slopes are considered 'hot' and those that have regression lines with negative slopes are considered 'cold'."),
-                    p("The slope of the regression line slope serves to capture the trend of the topic overtime.  For example, a “hot” topic means that over time research abstracts within Federal RePORTER’s database have a higher weight for that topic, ie. the topic is more present in the corpus.  The magnitude of the regression line slope allows us to compare which topics are “hotter” or “colder”.  "),
+                    p("Given our optimal topic model, an NMF model with 75 topics, we analyze its results to discover and characterize 'hot' and 'cold' topics. To do so, we follow the approach of [1] with the exception that we use our optimal NMF topic model, not an LDA model. To categorize a topic as “hot” or “cold”, we first use the document-topic matrix to find the average weight of each topic in each year between 2010-2019. This creates a set of points for each topic, where each point has the form (year, weightyear).  We then model the relationship between the weights and years for each topic using linear regression. Topics that have regression lines with positive slopes are considered 'hot' and those that have regression lines with negative slopes are considered 'cold'."),
+                    p("The slope of the regression line slope serves to capture the trend of the topic overtime.  For example, a “hot” topic means that over time research abstracts within Federal RePORTER’s database have a higher weight for that topic, i.e., the topic is more present in the corpus.  The magnitude of the regression line slope allows us to compare which topics are “hotter” or “colder”.  "),
                     p("We used the work of [2] as a reference for this emerging topics technique as well, but instead of using a time period of a few years per data point of the regression line, we chose the strategy of [1] and use a year per data point.  "),
                     p(strong("Pandemics Case Study")),
                     p("We conduct a pandemics case study where we explore emerging topics around the research areas of pandemics and coronavirus.  To do this we first use information retrieval techniques to create two smaller corpora: one that focuses on pandemics, and one that focuses on coronavirus.  We then use an NMF topic model of 30 topics on each smaller corpus and conduct the emerging topics analysis as above.  The size of each corpus is given in the table below. "),
@@ -363,6 +389,9 @@ shinyApp(
 
                   )),
 
+        
+        
+        
         tabItem(tabName = "topicmodeling",
                 fluidRow(
                   boxPlus(
@@ -378,9 +407,9 @@ shinyApp(
                         tags$li("A term must appear in at least 20 documents in the corpus, and"),
                         tags$li("A term cannot appear in more than 60% of the documents of the corpus.")
                       ),
-	                    p("This filtering of extremes allows us to remove terms that are not frequent enough to become a top 10 word in a topic, and to remove common words to the corpus that would not contribute to topic meaning.  We use the term-document matrix with LDA and the TFIDF term-document matrix with NMF.  Both matrices are created using the Python package Scikit-Learn."),
-                      p("In addition to a matrix, LDA and NMF also both require the number of topics as input.  Unfortunately, we do not know the number of topics present in the corpus in advance.  We find our optimal topic model by varying the number of topics for NMF and LDA while tracking the CV topic coherence for each choice.  The model with the largest coherence is the optimal model."),
-                      p("For the interested reader, LDA also takes two other parameters: α and β.  α controls the document-topic density and β controls the topic-word density.  A higher value of alpha means that documents are assumed to be made up of more topics whereas a higher value of beta means that topics are assumed to be made up of more of the words in the corpus.  In all of our LDA model runs, we use α = 1/N, where N is the number of topics, and β = 0.1.  These parameter choices allow our documents to be made up of multiple topics [last phrase needs more detail] and the topics to be specific.")
+	                    p("This filtering of extremes allows us to remove terms that are not frequent enough to become a top 10 word in a topic, and to remove common words to the corpus that would not contribute to topic meaning.  We use the term-document matrix as input for LDA and the TFIDF term-document matrix as input for NMF.  Both matrices are created using the Python package Scikit-Learn."),
+                      p("In addition to the term-document matrix, LDA and NMF also require the number of topics as input.  Unfortunately, we do not know the number of topics present in the corpus in advance.  We find our optimal topic model by varying the number of topics for NMF and LDA while tracking the CV topic coherence for each choice.  The model with the largest coherence is the optimal model."),
+                      p("For the interested reader, LDA also takes two other parameters, α and β, that encode prior knowledge about the corpus.  Specifically,  α controls the document-topic density and β controls the topic-word density.  Setting a higher value of α means that documents are assumed to be made up of more topics whereas a higher value of beta means that topics are assumed to be made up of more of the words in the corpus.  In all of our LDA model runs, we fixed these parameters at α = 1/N, where N is the number of topics, and β = 0.1.  These parameter choices allow our documents to be made up of multiple topics [last phrase needs more detail] and the topics to be specific.")
                       )
                     ),
                   boxPlus(
@@ -391,9 +420,10 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("We used the metric of topic coherence to evaluate the best model. Topic coherence is a measure used in topic modeling to measuring the degree of semantic similarity between high scoring words in the topic. Below are the plots of CV topic coherence versus number of topics for our LDA and NMF models.  Each point on these plots represents one run of LDA or NMF with the corresponding number of topics.  Both LDA and NMF are stochastic algorithms, which means that we could get different results for two runs of the same model using the same parameters.  Future work includes creating these plots but where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
+                    column(12, 
+                           p("We used the topic coherence metric to evaluate the topic models and select the best model. Topic coherence is a measure that calculates the degree of semantic similarity between high scoring words in the topic. The plots below display the CV topic coherence for varying numbers of topics for our LDA and NMF models. Since LDA and NMF are both stochastic algorithms, this means that they could yield different results for two runs of the same model using the same parameters. In the future, we plan to create similar plots where each point would represent the average coherence of ten runs of LDA or NMF with the corresponding number of topics."),
                            column(12, img(src = "LDA_NMF_tc.png", width = "100%"), align = "center"),
-                           p("We see that NMF is outperforming LDA and that the optimal topic model for our corpus is NMF using 75 topics.  The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA.  In the future, the plots representing average coherence of 10 model runs for each number of topics will be smoother.")
+                           p("Overall, the NMF models have higher topic coherence than the LDA models at each of the number of topics. Across all of the models fit, the optimal topic model for our corpus is the NMF model with 75 topics. The jagged nature of these line graphs is due to the stochastic nature of NMF and LDA. In the future, the plots representing average coherence of 10 model runs for each number of topics will hopefully show smoother trends.")
                     )
                   ),
                   boxPlus(
@@ -404,19 +434,23 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("We give results for the optimal topic model below and proceed to use it for our emerging topics work as well."),
+                    column(12, 
+                           p("Here, we analyze the topics generated by the optimal topic model by characterizing their coherency, representation, and dominance."),
                            column(12, img(src = "coherence.png", width = "90%"), align = "center"),
-                           p("Through the measure of topic coherence, we see that topics on liver, vaccine, and students have a high degree of semantic similarity between high scoring words within the topic."),
+                           p("Using the topic coherence measure, we show the most and least coherent topics and the five words in each with the topic with highest weight. We see that topics relating to the liver, vaccines, students, neurodegenerative diseases, alcohol, schools, conferences, academic training, prostate cancer, and neurons have particularly high topic coherence. Within these topics, the words with the highest weight seem to have a high degree of semantic similarity. For example, the words vaccine, antibody, antigen, immune, and vaccination are all very similar thematically."),
                            column(12, img(src = "topic_rep.png", width = "90%"), align = "center"),
-                           p("We analyzed topics by how represented they are in our data. We found popular topics of cell, patients, proteins and technology."),
+                           p("In addition, we analyzed the generated topics by looking at the topics that are in the highest and lowest percentage of documents in our corpus. We see that topics relating to the cell, patient therapies, proteins, technology, clinical research, mathematical models, genetics, population health, mice, and drug testing are the most highly represented in the corpus."),
                            column(12, img(src = "topic_rank.png", width = "90%"), align = "center"),
-                           p("We also analyzed topics by their rank. We found dominant topics similarly to the team in “Identifying Core Topics in Technology and Innovation Management: A Topic Model Approach” by analyzing the number of articles which each topic has the highest proportion. Here, we see that a topic on proteins is the highest-ranking topic at almost 5% while the cell topic (most represented topic in graph above) was less than .5% a dominant topic."),
+                           p("Lastly, we consider the “dominance” of the topics as calculated in [1]. The dominance measure is calculated by counting the number of articles which each topic has the highest proportion. Here, we see that topics relating to proteins, laboratories, gpcr, cancers, the immune system, and technology were the most dominant topics in over 3% of the corpus while the cell topic, most represented topic in figure above, was the dominant topic in less than 0.5% of the corpus."),
+                           p("Across the three different measures, we notice that there is a relative lack of overlap between the topics that are found to be the most coherent, representative, and dominant. This could possibly be due to the stochastic nature of the algorithms yielding topics that are somewhat unstable."),
                            column(12, DT::dataTableOutput("optimal_topics"))
-
-                    )
+                    ),
+                    footer = p("[1] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach. The Journal of Technology Transfer, 43(5), 1291-1317.")
                   )
                 )),
 
+        
+        
         tabItem(tabName = "model",
                 fluidRow(
                   boxPlus(
@@ -427,8 +461,11 @@ shinyApp(
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("We utilized query words to develop two text corpuses for pandemics and coronavirus. This allowed our team to focus on documents specifically related to these words."))),
-                    #column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. To change graph settings, hover over the top right of the graph."))),
+                    column(12, p("Research on pandemics is an area of particular interest to our sponsor. We utilized information retrieval techniques to develop two smaller corpora from our larger dataset. One focused on pandemics and the other focused more specifically on abstracts related to coronavirus."),
+                               p("We used a combination of three different information retrieval techniques in compiling both the pandemic and coronavirus corpora – Literal Term Matching, TFIDF, and Latent Semantic Indexing (LSI) – as outlined in our Data and Methodology section."), 
+                               p("We identified 1,137 projects related to pandemics and 1,012 focused on coronavirus.")
+                           )),
+                    
                   boxPlus(
                     title = "Case Study 1: Pandemics",
                     closable = FALSE,
@@ -438,7 +475,9 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Pandemics"), align = 'center'),
-                    column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in pandemics are infant respiratory and zika.")),
+                    column(12, p("Explore topics by hovering over lines to see the year and proportion information for each topic."),
+                              p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly."),
+                              p("Some of the top topics in pandemics are infant respiratory and zika.")),
                     column(12, plotlyOutput("pandemics")),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("pandemics_topics")),
@@ -454,8 +493,9 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, h2("Coronavirus"), align = 'center'),
-                    column(12, p("Explore topics by hovering over lines to see the topic and proportion information. On the legend, click on a topic to deselect or double click on a topic to isolate it and see only one line on the plot.  There are many more functionality options above the legend. To highlight a few, you can click on the Camera button to download the current view as a png. Furthermore, you can use the magnifying glass, plus, and minus sign to zoom in and out. Finally, on the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly. Some of the top topics in coronavirus are mers and cmv.")),
-                    #column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
+                    column(12, p("Explore topics by hovering over lines to see the topic and proportion information."),
+                              p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly."),
+                              p("Some of the top topics in coronavirus are mers and cmv.")),
                     column(12, plotlyOutput("coronavirus")),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("coronavirus_topics")),
@@ -464,6 +504,9 @@ shinyApp(
                   )
                 )),
 
+        
+        
+        
         tabItem(tabName = "team",
                 fluidRow(
                   boxPlus(
@@ -693,7 +736,7 @@ shinyApp(
         theme_bw() +
         theme(axis.text.y.left = element_text(color = "#0072B2")) +
         theme(axis.text.y.right = element_text(color = "#D55E00"))
-    })
+    })    
 
     output$important_words <- renderPlot({
 
@@ -748,7 +791,7 @@ shinyApp(
                                  tidy_abstracts[tidy_abstracts$dept == "VA", ])
 
       selected_cloud %>%
-        with(wordcloud(word, n, scale = c(5,1.5),
+        with(wordcloud(word, n, scale = c(2.5,1), #5, 1.5
                        min.freq = input$freq, max.words = input$max,
                        ordered.colors = TRUE))
     })
@@ -772,7 +815,7 @@ shinyApp(
     })
 
     output$emerging_topics <- DT::renderDataTable({
-      datatable(reg_topics, rownames = FALSE, options = list(
+      datatable(full_topics, rownames = FALSE, options = list(
         order = list(list(0, 'desc'))))
     })
 
