@@ -723,7 +723,7 @@ shinyApp(
     filtered_ab <- reactive({
       dplyr::filter(tidy_year_ab, word == input$search_term)
     })
-    
+
     output$word_time <- renderPlot({
       ggplot() +
         geom_point(data = filtered_year(), mapping = aes(x = year, y = n), size = 3, color = "#0072B2") +
@@ -737,8 +737,7 @@ shinyApp(
         theme(axis.text.y.left = element_text(color = "#0072B2")) +
         theme(axis.text.y.right = element_text(color = "#D55E00"))
     })    
-    
-    
+
     output$important_words <- renderPlot({
 
       selected_type <- switch(input$department,
