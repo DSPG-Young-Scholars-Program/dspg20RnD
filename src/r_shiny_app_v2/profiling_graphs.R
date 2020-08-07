@@ -5,7 +5,7 @@ library(gridExtra)
 library(ggplot2)
 library(dplyr)
 
-data_for_liz <- read_csv("../../data/final/dashboard_data/data_for_liz.csv")
+#data_for_liz <- read_csv("../../data/final/dashboard_data/data_for_liz.csv")
 
 # ------------------
 
