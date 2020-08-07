@@ -77,9 +77,10 @@ tidy_year_ab_count$year <- as.numeric(tidy_year_ab_count$year)
 saveRDS(tidy_year_ab_count, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/tidy_year_abst.rds")
 
 #All topics
-topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu6_SeventyFive_FullDF.csv")
+topics <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/clean_no_mu6_SeventyFive_FullDF.csv")
 topics <- topics %>%
-  filter(START_YEAR > 2009)
+  filter(START_YEAR > 2009) %>%
+  filter(START_YEAR < 2020)
 
 saveRDS(topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/seventyfivetopicsdf.rds")
 
@@ -90,9 +91,12 @@ all_topics <- topics %>%
 saveRDS(all_topics, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/all_topics.rds")
 
 #Coronavirus topics
-corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu_Thirty_Corona_edit.csv")
+corona <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/clean_no_mu_Thirty_Corona_edit.csv")
 corona <- corona %>%
-  filter(START_YEAR > 2009)
+  filter(START_YEAR > 2009) %>%
+  filter(START_YEAR < 2020)
+
+corona$Topic_Legend[291:300] = "influenza, phage_display_library,<br>surface_plasmon_resonance, task, vaccinate"
 
 saveRDS(corona, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtycoronatopics.rds")
 
@@ -104,9 +108,10 @@ saveRDS(corona_topic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/corona_
 
 #Pandemics topics
 
-pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/no_mu6_Thirty_Pandemic_Topics.csv")
+pandemic <- read_csv("~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/clean_no_mu6_Thirty_Pandemic_Topics.csv")
 pandemic <- pandemic %>%
-  filter(START_YEAR > 2009)
+  filter(START_YEAR > 2009) %>%
+  filter(START_YEAR < 2020)
 
 saveRDS(pandemic, "~/git/dspg20rnd/dspg20RnD/src/r_shiny_app_v2/data/thirtypandemictopics.rds")
 
