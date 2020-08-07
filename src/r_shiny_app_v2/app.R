@@ -226,60 +226,49 @@ shinyApp(
                   )
                 )),
 
-        
+# hot and cold ------------------------------------------------        
         
         tabItem(tabName = "both",
                 fluidRow(
                   boxPlus(
-                    title = "Hot and Cold Topics Overview",
+                    title = "Overview",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, p("To determine which research topics are trending hot or cold over time, we used our NMF model results to calculate the yearly prevalence of each topic within Federal RePORTER. Non-negative matrix factorization provides the distribution of each topic across every document within the corpus, which we summarized into each topic’s average weight by year. As detailed in Thomas L. Griffiths and Mark Steyvers’ 2004 paper Finding Scientific Topics, one can fit a line of best fit onto each topic’s average weight by year as a metric of whether that topic has increased or decreased in prevalence over time."),
-                           p("After we conducted this linear trend analysis on these values, we defined topics within our model that saw the sharpest increases as emerging, meaning that an influx of research abstracts within Federal RePORTER’s database centered on that specific topic over the last decade. "),
-                           p("The following graphs detail this emerging topics analysis. Our Emerging Topics graph illustrates the year-by-year average weight per topic of our 75 topic NMF model, with the slope of each topic’s best-fit line shown in the table below. The Hottest & Coldest Topics graphs provide the five highest and five lowest topic slopes determined by our model. ")
-                           )
-                    ),
-                  boxPlus(
-                    title = "Emerging Topics",
-                    closable = FALSE,
-                    width = NULL,
-                    status = "warning",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    enable_sidebar = FALSE,
-                    column(12, h2("Emerging Topics"), align = 'center'),
-                    column(12, p("Explore topics by hovering over lines to see the year and proportion information for each topic."),
-                                p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly.")
-                          ),
-                    column(12, p("Graphs produced with Plotly. Hover over the lines to see topic and proportion information. Click on a topic to deselect or double click on a topic to isolate. More settings are located on the top right of the graph.")),
-                    column(12, plotlyOutput("emerging")),
-                    column(12, DT::dataTableOutput("emerging_topics"))
+                    column(12, 
+                           p("On the previous tab we looked at representation and “dominance” of the topics produced by the optimal topic model that we found, an NMF model with 75 topics.  We use this same model and now turn our focus to calculating the yearly prevalence of each topic within Federal RePORTER to determine which research topics are trending hot or cold over time.  As described in our Data and Methodology section, we follow the work in [1] and calculate each topic’s average weight per year from 2010-2019 and perform a linear smoothing of these averages to detect which topics have increased or decreased in prevalence over time.  A topic that increases in prevalence is considered “hot”, while a topic that decreases in prevalence is considered “cold”.")),
+                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235.")
                   ),
-
                   boxPlus(
-                    title = "Hottest & Coldest Topics",
+                    title = "Results for NMF model with 75 Topics",
                     closable = FALSE,
                     width = NULL,
                     status = "warning",
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
-                    column(12, h2("Hot & Cold Topics")),
-                    column(12, p("Information about these figures."), align = 'center'),
-                    p("outputs"),
-                    #column(12, plotlyOutput("emerging")),
-                    #column(12, DT::dataTableOutput("emerging_topics"))
-                    column(12, img(src = "pan_hot.png", width = "80%"), align = "center"),
-                    column(12, img(src = "pan_cold.png", width = "80%"), align = "center")
-                  )
+                    column(12, p("Explore topics by hovering over lines to see the year and proportion information for each topic."),
+                                p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly."),
+                                p("You can also view results in the table below which includes each topic’s linear smoothing coefficient, i.e., the slope of the trend line through the average weights per year for that topic, and categorization as “hot” or “cold”.  The ten words listed for each topic are those with the highest weights for that topic.  You can sort the table in ascending or descending order by any of the given columns by clicking on the up or down arrow next to the column name you wish to sort by.")
+                           ),
+                    column(12, plotlyOutput("emerging")),
+                    column(12, br(), br()),
+                    column(12, p("Search for a specific word to find which topics contain the search term.")),
+                    column(12, DT::dataTableOutput("emerging_topics")),
+                    column(12, br(), br()),
+                    h4(strong("\"Hottest\" and \"Coldest\" Topics")),
+                    column(12, p("We highlight the five “hottest” and “coldest” topics in the graphs below, i.e., the topics with the largest and smallest linear smoothing coefficients.  We include the line graph as given in the plot above and also the linear trend line for each topic.")),
+                    column(12, img(src = "full_hot.png", width = "80%"), align = "center"),
+                    column(12, br()),
+                    column(12, img(src = "full_cold.png", width = "80%"), align = "center")
+                    )
                 )),
 
         
-        
+# data and methodology -------------------------------------------        
         
         tabItem(tabName = "data",
                 fluidRow(
@@ -390,7 +379,7 @@ shinyApp(
                   )),
 
         
-        
+# topic modeling ---------------------------------------------        
         
         tabItem(tabName = "topicmodeling",
                 fluidRow(
@@ -409,7 +398,7 @@ shinyApp(
                       ),
 	                    p("This filtering of extremes allows us to remove terms that are not frequent enough to become a top 10 word in a topic, and to remove common words to the corpus that would not contribute to topic meaning.  We use the term-document matrix as input for LDA and the TFIDF term-document matrix as input for NMF.  Both matrices are created using the Python package Scikit-Learn."),
                       p("In addition to the term-document matrix, LDA and NMF also require the number of topics as input.  Unfortunately, we do not know the number of topics present in the corpus in advance.  We find our optimal topic model by varying the number of topics for NMF and LDA while tracking the CV topic coherence for each choice.  The model with the largest coherence is the optimal model."),
-                      p("For the interested reader, LDA also takes two other parameters, α and β, that encode prior knowledge about the corpus.  Specifically,  α controls the document-topic density and β controls the topic-word density.  Setting a higher value of α means that documents are assumed to be made up of more topics whereas a higher value of beta means that topics are assumed to be made up of more of the words in the corpus.  In all of our LDA model runs, we fixed these parameters at α = 1/N, where N is the number of topics, and β = 0.1.  These parameter choices allow our documents to be made up of multiple topics [last phrase needs more detail] and the topics to be specific.")
+                      p("For the interested reader, LDA also takes two other parameters, α and β, that encode prior knowledge about the corpus.  Specifically,  α controls the document-topic density and β controls the topic-word density.  Setting a higher value of α means that documents are assumed to be made up of more topics whereas a higher value of beta means that topics are assumed to be made up of more of the words in the corpus.  In all of our LDA model runs, we fixed these parameters at α = 1/N, where N is the number of topics, and β = 0.1.  These parameter choices allow our documents to be made up of multiple topics and the topics to be specific.")
                       )
                     ),
                   boxPlus(
@@ -442,14 +431,16 @@ shinyApp(
                            p("In addition, we analyzed the generated topics by looking at the topics that are in the highest and lowest percentage of documents in our corpus. We see that topics relating to the cell, patient therapies, proteins, technology, clinical research, mathematical models, genetics, population health, mice, and drug testing are the most highly represented in the corpus."),
                            column(12, img(src = "topic_rank.png", width = "90%"), align = "center"),
                            p("Lastly, we consider the “dominance” of the topics as calculated in [1]. The dominance measure is calculated by counting the number of articles which each topic has the highest proportion. Here, we see that topics relating to proteins, laboratories, gpcr, cancers, the immune system, and technology were the most dominant topics in over 3% of the corpus while the cell topic, most represented topic in figure above, was the dominant topic in less than 0.5% of the corpus."),
-                           p("Across the three different measures, we notice that there is a relative lack of overlap between the topics that are found to be the most coherent, representative, and dominant. This could possibly be due to the stochastic nature of the algorithms yielding topics that are somewhat unstable."),
+                           p("Across the three different measures, we notice that there is a relative lack of overlap between the topics that are found to be the most coherent, representative, and dominant. This could possibly be due to the stochastic nature of the algorithms yielding topics that are somewhat unstable. We provide complete results on these measures in the table below. You can sort the table in ascending or descending order by any of the given columns by clicking on the up or down arrow next to the column name you wish to sort by."),
+                           column(12, br()),
                            column(12, DT::dataTableOutput("optimal_topics"))
                     ),
                     footer = p("[1] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach. The Journal of Technology Transfer, 43(5), 1291-1317.")
                   )
                 )),
 
-        
+
+# case studies --------------------------------------------------        
         
         tabItem(tabName = "model",
                 fluidRow(
@@ -462,9 +453,10 @@ shinyApp(
                     collapsible = TRUE,
                     enable_sidebar = FALSE,
                     column(12, p("Research on pandemics is an area of particular interest to our sponsor. We utilized information retrieval techniques to develop two smaller corpora from our larger dataset. One focused on pandemics and the other focused more specifically on abstracts related to coronavirus."),
-                               p("We used a combination of three different information retrieval techniques in compiling both the pandemic and coronavirus corpora – Literal Term Matching, TFIDF, and Latent Semantic Indexing (LSI) – as outlined in our Data and Methodology section."), 
-                               p("We identified 1,137 projects related to pandemics and 1,012 focused on coronavirus.")
-                           )),
+                               p("We used a combination of three different information retrieval techniques in compiling both the pandemic and coronavirus corpora – Literal Term Matching, TFIDF, and Latent Semantic Indexing (LSI) – as outlined in our Data and Methodology section.  This resulted in a corpus of 1,137 projects related to pandemics and another corpus of 1,012 projects related to coronavirus. We then conducted the \"hot\" and \"cold\" topic analysis of [1] on each corpus.")
+                           ),
+                    footer = p("[1] Thomas L. Griffiths and Mark Steyvers. 2004. Finding Scientific Topics. Proceedings of the National Academy of Sciences 101 (suppl 1), 5228-5235.")
+                    ),
                     
                   boxPlus(
                     title = "Case Study 1: Pandemics",
@@ -477,11 +469,17 @@ shinyApp(
                     column(12, h2("Pandemics"), align = 'center'),
                     column(12, p("Explore topics by hovering over lines to see the year and proportion information for each topic."),
                               p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly."),
-                              p("Some of the top topics in pandemics are infant respiratory and zika.")),
+                              p("You can also view results in the table below which includes each topic’s linear smoothing coefficient, i.e., the slope of the trend line through the average weights per year for that topic, and categorization as “hot” or “cold”. The ten words listed for each topic are those with the highest weights for that topic. You can sort the table in ascending or descending order by any of the given columns by clicking on the up or down arrow next to the column name you wish to sort by.")
+                           ),  
                     column(12, plotlyOutput("pandemics")),
+                    column(12, br(), br()),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("pandemics_topics")),
+                    column(12, br(), br()),
+                    h4(strong("\"Hottest\" and \"Coldest\" Topics")),
+                    column(12, p("We highlight the five “hottest” and “coldest” topics in the graphs below, i.e., the topics with the largest and smallest linear smoothing coefficients.  We include the line graph as given in the plot above and also the linear trend line for each topic.  It is interesting to note that our results show a sharp increase in Zika virus research after the outbreak in 2015-2016.  We also see increased research in influenza in 2010 and 2011 after the swine flu pandemic in 2009-2010.")),
                     column(12, img(src = "pan_hot.png", width = "80%"), align = "center"),
+                    column(12, br()),
                     column(12, img(src = "pan_cold.png", width = "80%"), align = "center")
                   ),
                   boxPlus(
@@ -495,17 +493,23 @@ shinyApp(
                     column(12, h2("Coronavirus"), align = 'center'),
                     column(12, p("Explore topics by hovering over lines to see the topic and proportion information."),
                               p("On the legend, click on a topic to deselect it, or double click on a topic to isolate it and see only one line on the plot. There are more functionality options above the legend. You can click on the Camera button to download the current view as a png. You can use the magnifying glass, plus, and minus sign to zoom in and out. On the double tag, you can compare proportions for all topics year over year. All interactive graphs are produced with Plotly."),
-                              p("Some of the top topics in coronavirus are mers and cmv.")),
+                           p("You can also view results in the table below which includes each topic’s linear smoothing coefficient, i.e., the slope of the trend line through the average weights per year for that topic, and categorization as “hot” or “cold”. The ten words listed for each topic are those with the highest weights for that topic. You can sort the table in ascending or descending order by any of the given columns by clicking on the up or down arrow next to the column name you wish to sort by.")
+                          ), 
                     column(12, plotlyOutput("coronavirus")),
+                    column(12, br(), br()),
                     column(12, p("Search for a specific word to find which topics contain the search term.")),
                     column(12, DT::dataTableOutput("coronavirus_topics")),
+                    column(12, br(), br()),
+                    h4(strong("\"Hottest\" and \"Coldest\" Topics")),
+                    column(12, p("We highlight the five “hottest” and “coldest” topics in the graphs below, i.e., the topics with the largest and smallest linear smoothing coefficients.  We include the line graph as given in the plot above and also the linear trend line for each topic.  We observe that research on Middle East respiratory syndrome (MERS) is increasing at the highest rate of the topics discovered by our model.  The emergence of MERS in 2012 provides a possible explanation for this increasing trend.")),
                     column(12, img(src = "cor_hot.png", width = "90%"), align = "center"),
+                    column(12, br()),
                     column(12, img(src = "cor_cold.png", width = "90%"), align = "center")
                   )
                 )),
 
         
-        
+# team ------------------------------------        
         
         tabItem(tabName = "team",
                 fluidRow(
