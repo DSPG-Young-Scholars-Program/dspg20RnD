@@ -126,11 +126,11 @@ def lda_metrics(doc_term_matrix, n_topics, vectorizer, corpus, id2word, docs, ra
 
 # code copied from https://datascienceplus.com/evaluation-of-topic-modeling-topic-coherence/
 # minor alterations made
+ 
+n_topics = list(range(5,131,5)) + [140, 150, 175, 200]
+num_runs = 2
 
-n_topics = [130, 140, 150, 175, 200] #range(105,126,5) 
-num_runs = 1
-
-batch= 0
+batch= 6
 
 col_names = [f"iteration {i+batch}" for i in range(num_runs)]
 lda_p = pd.DataFrame(index = n_topics, columns = col_names)
@@ -142,7 +142,7 @@ for i in range(num_runs):
     
     # run models
     [p, c] = lda_metrics(doc_term_matrix=doc_term_matrix, n_topics=n_topics, vectorizer=vectorizer, 
-                         corpus=corpus, id2word=id2word, docs=docs, rand_start = 253) #(i+batch)*len(n_topics)) -- 228
+                         corpus=corpus, id2word=id2word, docs=docs, rand_start = (i+batch)*len(n_topics)) # rand_start -- 228
     
     # save results
     lda_p[f"iteration {i+batch}"] = p
@@ -151,5 +151,5 @@ for i in range(num_runs):
         
 # save results 
 
-lda_p.to_pickle("./lda_p3.pkl")
-lda_c.to_pickle("./lda_c3.pkl")
+lda_p.to_pickle("./results/final_10_runs/lda_p6-7.pkl")
+lda_c.to_pickle("./results/final_10_runs/lda_c6-7.pkl")
