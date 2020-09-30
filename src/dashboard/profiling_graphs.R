@@ -4,42 +4,49 @@ library(readr)
 library(gridExtra)
 library(ggplot2)
 library(dplyr)
+library(stringr)
 
-#data_for_liz <- read_csv("../../data/final/dashboard_data/data_for_liz.csv")
+data_for_liz <- read_csv("../../data/final/dashboard_data/data_for_liz.csv")
 
 # ------------------
+# 
+# # Find Start Year --------
+# 
+# data_for_liz$START_YEAR = 0
+# 
+# for(i in 1:nrow(data_for_liz))
+# {
+#   d = data_for_liz$PROJECT_START_DATE[i]
+# 
+#   splitdate = strsplit(d, "/")
+#   
+#   if(length(splitdate[[1]]) == 3)
+#   {
+#     y = splitdate[[1]][3]
+#   }
+#   else
+#   {
+#     y = splitdate[[1]][1]
+#   }
+#   
+#   data_for_liz$START_YEAR[i] <- as.integer(y) 
+# }
+# 
+# # ---------------------------------------
 
-# Find Start Year --------
+# new code to find start year
 
-data_for_liz$START_YEAR = 0
-
-for(i in 1:nrow(data_for_liz))
-{
-  d = data_for_liz$PROJECT_START_DATE[i]
-
-  splitdate = strsplit(d, "/")
-  
-  if(length(splitdate[[1]]) == 3)
-  {
-    y = splitdate[[1]][3]
-  }
-  else
-  {
-    y = splitdate[[1]][1]
-  }
-  
-  data_for_liz$START_YEAR[i] <- as.integer(y) 
-}
-
-# ---------------------------------------
+data_for_liz$START_YEAR <- str_sub(data_for_liz$PROJECT_START_DATE, -4)
+data_for_liz$START_YEAR <- as.integer(data_for_liz$START_YEAR)
 
 
+# ----------------------------------
 
 data_for_liz %>%
   count(DEPARTMENT) %>%
   mutate(perc = (n / nrow(data_for_liz)) *100) %>%
-  ggplot(aes(x = reorder(DEPARTMENT, -perc), y = perc, fill = DEPARTMENT)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
+  ggplot(aes(x = reorder(DEPARTMENT, -perc), y = perc)) +
+  geom_bar(stat = "identity", show.legend = FALSE, fill = "#0072B2") +
   ylim(0, 100) +
   labs(x = "Department", y = "Percent of Dataset") +
   ggtitle("Abstract Count by Funding Department") +
@@ -56,8 +63,8 @@ data_for_liz %>%
 data_for_liz %>%
   filter(START_YEAR > 2007) %>%
   filter(START_YEAR < 2020) %>%
-  ggplot(aes(x = as.factor(START_YEAR), fill = as.factor(START_YEAR))) +
-  geom_bar(show.legend = FALSE) +
+  ggplot(aes(x = as.factor(START_YEAR))) +
+  geom_bar(show.legend = FALSE, fill = "#0072B2") +
   xlab("Year") +
   ylab("Number of Abstracts") +
   ggtitle("Abstract Count by Project Start Year") +
