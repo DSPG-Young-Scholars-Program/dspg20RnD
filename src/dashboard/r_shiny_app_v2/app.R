@@ -9,6 +9,7 @@ library(tidyverse)
 library(ggplot2)
 library(DT)
 library(dplyr)
+library(shinyjs)
 
 source("theme.R")
 
@@ -32,13 +33,29 @@ cor_topics <- readRDS("data/cor_topics.rds")
 full_topics <- readRDS("data/full_topics.rds")
 
 
+jscode <- "var referer = document.referrer;
+           var n = referer.includes('economic');
+           var x = document.getElementsByClassName('logo');
+           if (n != true) {
+             x[0].innerHTML = '<a href=\"https://datascienceforthepublicgood.org/events/symposium2020/poster-sessions\">' +
+                              '<img src=\"DSPG_white-01.png\", alt=\"DSPG 2020 Symposium Proceedings\", style=\"height:42px;\">' +
+                             '</a>';
+           } else {
+             x[0].innerHTML = '<a href=\"https://datascienceforthepublicgood.org/economic-mobility/community-insights\">' +
+                              '<img src=\"AEMLogoGatesColors-11.png\", alt=\"Gates Economic Mobility Case Studies\", style=\"height:42px;\">' +
+                              '</a>';
+           }
+           "
+
   # UI ---------------------------------------------------------
 
 shinyApp(
   ui = dashboardPagePlus(
     title = "DashboardPage",
     header = dashboardHeaderPlus(
-      title = "DSPG 2020"
+      title = "DSPG 2020",
+      left_menu = tagList(div("RND ABSTRACTS: EMERGING TOPIC IDENTIFICATION", style="height:35px; display:flex; align-items: center; color: silver;"))
+
       ),
 
     # SIDEBAR (LEFT) ----------------------------------------------------------
@@ -46,11 +63,11 @@ shinyApp(
     sidebar = dashboardSidebar(
       sidebarMenu(
         id = "tabs",
-        menuItem(
-          tabName = "homepage",
-          text = "Home Page",
-          icon = icon("home")
-        ),
+        # menuItem(
+        #   tabName = "homepage",
+        #   text = "Home Page",
+        #   icon = icon("home")
+        # ),
 
         menuItem(
           tabName = "overview",
@@ -97,25 +114,26 @@ shinyApp(
 
   # BODY --------------------------------------------------------------------
     body = dashboardBody(
+      useShinyjs(),
       customTheme,
       fluidPage(
       tabItems(
 
 
-        tabItem(tabName = "homepage",
-                fluidRow(
-                  boxPlus(
-                    title = "Home Page",
-                    closable = FALSE,
-                    width = NULL,
-                    status = "warning",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    column(12, img(src = "uva-dspg-logo.jpg", width = "300px", height = "300px"), align = "center"),
-                    column(12, h1("UVA Biocomplexity Institute"), align = "center"),
-                    column(12, h2("R&D Abstracts: Emerging Topic Identification"), align = "center")
-
-                  ))),
+        # tabItem(tabName = "homepage",
+        #         fluidRow(
+        #           boxPlus(
+        #             title = "Home Page",
+        #             closable = FALSE,
+        #             width = NULL,
+        #             status = "warning",
+        #             solidHeader = TRUE,
+        #             collapsible = TRUE,
+        #             column(12, img(src = "uva-dspg-logo.jpg", width = "300px", height = "300px"), align = "center"),
+        #             column(12, h1("UVA Biocomplexity Institute"), align = "center"),
+        #             column(12, h2("R&D Abstracts: Emerging Topic Identification"), align = "center")
+        #
+        #           ))),
 
 
 
@@ -376,8 +394,8 @@ shinyApp(
                       tags$li(strong("TFIDF:"), "we use the TFIDF term-document matrix of weighted counts per word per document for our full dataset of abstracts to extract the 500 projects that have the largest weights for the word “pandemic” in their abstracts. "),
                       tags$li(strong("Latent Semantic Indexing (LSI):"), "we use a truncated singular value decomposition on the TFIDF term-document matrix for our full dataset of abstracts to extract the 500 projects that have abstracts most relevant to the search query for the word “pandemic”.  LSI differs from the previous two information retrieval approaches in the fact that project abstracts returned as relevant to the search query do not necessarily have to contain the word “pandemic”.  But they may contain words that are latently related to the word “pandemic”.  For more information about LSI, the interested reader can see the seminal paper [3].  We use the implementation of the truncated singular value decomposition in the Python package Scikit-Learn. ")),
                     p("To create the smaller corpus we then take the set of unique projects from the union of the results returned from the three information retrieval methods above.  "),
-                    footer = p("[1] Griffiths, T., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences, USA, 101(1), 5228-35.", a(href = "https://doi.org/10.1073/pnas.0307752101", "https://doi.org/10.1073/pnas.0307752101."), br(), 
-                               "[2] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach.", em("Journal of Technology Transfer,"), "43, 1291-1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."), br(), 
+                    footer = p("[1] Griffiths, T., & Steyvers, M. (2004). Finding scientific topics. Proceedings of the National Academy of Sciences, USA, 101(1), 5228-35.", a(href = "https://doi.org/10.1073/pnas.0307752101", "https://doi.org/10.1073/pnas.0307752101."), br(),
+                               "[2] Lee, H., & Kang, P. (2018). Identifying core topics in technology and innovation management studies: A topic model approach.", em("Journal of Technology Transfer,"), "43, 1291-1317.", a(href = "https://doi.org/10.1007/s10961-017-9561-4", "https://doi.org/10.1007/s10961-017-9561-4."), br(),
                                "[3] Deerwester, S., Dumais, S., Furnas, G., Landauer, T., & Harshman, R. (1990). Indexing by latent semantic analysis.", em("Journal of the American Society for Information Science,"), "41(6), 391-407.")
                     )
 
@@ -725,6 +743,9 @@ shinyApp(
 
   server = function(input, output) {
 
+    # Run JavaScript Code
+    runjs(jscode)
+
     filtered_year <- reactive({
       dplyr::filter(tidy_year, word == input$search_term)
     })
@@ -821,7 +842,7 @@ shinyApp(
 
     output$emerging <- renderPlotly({
 
-      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = topics$Topic_Legend) %>% 
+      plot_ly(topics, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = topics$Topic, name = topics$Topic_Legend) %>%
         layout(xaxis = list(title="Year"), yaxis = list(title="Mean Weight"))
     })
 
@@ -831,7 +852,7 @@ shinyApp(
     })
 
     output$pandemics <- renderPlotly({
-      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic, name = pandemic$Topic_Legend) %>% 
+      plot_ly(pandemic, x = ~ START_YEAR, y = ~ Weight, type = "scatter", mode = "lines+markers", color = pandemic$Topic, name = pandemic$Topic_Legend) %>%
         layout(xaxis = list(title="Year"), yaxis = list(title="Mean Weight"))
     })
 
